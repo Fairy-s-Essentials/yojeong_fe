@@ -1,10 +1,20 @@
-import { createBrowserRouter, RouterProvider } from "react-router";
-import { MainPage } from "../pages/MainPage";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { DashboardPage } from "../pages/DashboardPage";
+import { ReadingPageWrapper } from "../pages/ReadingPageWrapper";
+import { HistoryPageWrapper } from "../pages/HistoryPageWrapper";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <MainPage />,
+    element: <DashboardPage />,
+  },
+  {
+    path: "/reading",
+    element: <ReadingPageWrapper />,
+  },
+  {
+    path: "/history",
+    element: <HistoryPageWrapper />,
   },
 ]);
 
