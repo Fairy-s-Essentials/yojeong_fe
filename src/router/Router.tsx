@@ -1,16 +1,26 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { DashboardPage } from "../pages/DashboardPage";
+import { DashboardPageWrapper } from "../pages/DashboardPageWrapper";
+import { ArticleInputPageWrapper } from "../pages/ArticleInputPageWrapper";
 import { ReadingPageWrapper } from "../pages/ReadingPageWrapper";
+import { ResultPageWrapper } from "../pages/ResultPageWrapper";
 import { HistoryPageWrapper } from "../pages/HistoryPageWrapper";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <DashboardPage />,
+    element: <DashboardPageWrapper />,
+  },
+  {
+    path: "/input",
+    element: <ArticleInputPageWrapper />,
   },
   {
     path: "/reading",
     element: <ReadingPageWrapper />,
+  },
+  {
+    path: "/result",
+    element: <ResultPageWrapper />,
   },
   {
     path: "/history",

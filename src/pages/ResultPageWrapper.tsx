@@ -1,12 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-import ReadingPage from "../components/ReadingPage";
+import ResultPage from "../components/ResultPage";
 import { useArticles } from "../contexts/ArticleContext";
 import type { Article } from "../types/article";
 
-export const ReadingPageWrapper = () => {
+export const ResultPageWrapper = () => {
   const navigate = useNavigate();
-  const { currentArticle, setCurrentArticle } = useArticles();
+  const { currentArticle, setCurrentArticle, addArticle } = useArticles();
 
   useEffect(() => {
     if (!currentArticle) {
@@ -14,13 +14,13 @@ export const ReadingPageWrapper = () => {
     }
   }, [currentArticle, navigate]);
 
-  const handleAnalysisComplete = (article: Article) => {
-    setCurrentArticle(article);
-    navigate("/result");
+  const handleComplete = (article: Article) => {
+    addArticle(article);
+    setCurrentArticle(null);
+    navigate("/");
   };
 
   const handleBack = () => {
-    setCurrentArticle(null);
     navigate("/");
   };
 
@@ -29,9 +29,9 @@ export const ReadingPageWrapper = () => {
   }
 
   return (
-    <ReadingPage
+    <ResultPage
       article={currentArticle}
-      onAnalysisComplete={handleAnalysisComplete}
+      onComplete={handleComplete}
       onBack={handleBack}
     />
   );

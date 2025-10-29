@@ -36,6 +36,8 @@ export const ArticleProvider = ({ children }: { children: ReactNode }) => {
       readingTime: 923,
       completedAt: "2025-10-10T14:30:00Z",
       accuracy: 82,
+      learnings:
+        "AI는 대체가 아닌 협력의 대상이며, 인간 고유의 창의성과 공감 능력을 개발하는 것이 중요하다",
       userSummary: [
         "AI가 많은 직업을 대체할 것이지만 새로운 기회도 만든다",
         "중요한 것은 AI와 경쟁이 아니라 활용하는 능력",
@@ -51,6 +53,8 @@ export const ArticleProvider = ({ children }: { children: ReactNode }) => {
       readingTime: 1234,
       completedAt: "2025-10-09T10:15:00Z",
       accuracy: 78,
+      learnings:
+        "원격 근무는 유연성을 제공하지만 커뮤니케이션과 업무 경계 설정이 중요하다",
     },
     {
       id: "3",
@@ -61,6 +65,8 @@ export const ArticleProvider = ({ children }: { children: ReactNode }) => {
       readingTime: 567,
       completedAt: "2025-10-08T16:45:00Z",
       accuracy: 85,
+      learnings:
+        "작은 습관의 반복이 큰 성과를 만들며, 일관성이 재능보다 중요하다",
     },
   ]);
 

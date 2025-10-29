@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   BookOpen,
   Target,
@@ -8,21 +7,12 @@ import {
   User,
   Plus,
 } from "lucide-react";
-import { Button } from "./ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "./ui/dialog";
-import { Input } from "./ui/input";
-import { Label } from "./ui/label";
+import { Button } from "./ui/buttons/button";
 import type { Article } from "../types/article";
 
 type DashboardProps = {
   articles: Article[];
-  onStartReading: (url: string) => void;
+  onStartReading: () => void;
   onViewHistory: () => void;
 };
 
@@ -31,9 +21,6 @@ export default function Dashboard({
   onStartReading,
   onViewHistory,
 }: DashboardProps) {
-  const [showUrlModal, setShowUrlModal] = useState(false);
-  const [url, setUrl] = useState("");
-
   const completedArticles = articles.filter((a) => a.completedAt);
   const thisWeekArticles = completedArticles.filter((a) => {
     const articleDate = new Date(a.completedAt!);
@@ -52,19 +39,11 @@ export default function Dashboard({
 
   const streak = 5; // Mock streak data
 
-  const handleSubmitUrl = () => {
-    if (url.trim()) {
-      onStartReading(url);
-      setUrl("");
-      setShowUrlModal(false);
-    }
-  };
-
   const getAccuracyColor = (accuracy?: number) => {
     if (!accuracy) return "bg-app-gray-200";
-    if (accuracy >= 80) return "bg-linear-to-br from-green-400 to-green-600";
-    if (accuracy >= 60) return "bg-linear-to-br from-blue-400 to-blue-600";
-    return "bg-linear-to-br from-orange-400 to-orange-600";
+    if (accuracy >= 80) return "bg-gradient-to-br from-green-400 to-green-600";
+    if (accuracy >= 60) return "bg-gradient-to-br from-blue-400 to-blue-600";
+    return "bg-gradient-to-br from-orange-400 to-orange-600";
   };
 
   return (
@@ -81,7 +60,7 @@ export default function Dashboard({
               <Bell className="w-5 h-5 text-app-gray-500" />
             </button>
             <button className="p-1 hover:bg-app-gray-50 rounded-full transition-colors">
-              <div className="w-8 h-8 rounded-full bg-linear-to-br from-app-blue to-app-purple flex items-center justify-center">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-app-blue to-app-purple flex items-center justify-center">
                 <User className="w-5 h-5 text-white" />
               </div>
             </button>
@@ -98,7 +77,7 @@ export default function Dashboard({
             AI보다 먼저 읽고, 더 깊게 이해하세요
           </p>
           <Button
-            onClick={() => setShowUrlModal(true)}
+            onClick={onStartReading}
             className="h-12 px-8 bg-app-blue hover:bg-app-blue-dark text-white rounded-lg shadow-lg hover:shadow-xl transition-all"
           >
             <BookOpen className="w-5 h-5 mr-2" />새 글 읽기
@@ -156,7 +135,7 @@ export default function Dashboard({
               <BookOpen className="w-12 h-12 text-app-gray-400 mx-auto mb-4" />
               <p className="text-app-gray-500 mb-4">아직 읽은 글이 없습니다</p>
               <Button
-                onClick={() => setShowUrlModal(true)}
+                onClick={onStartReading}
                 variant="outline"
                 className="border-app-blue text-app-blue hover:bg-app-blue-light"
               >
@@ -202,58 +181,11 @@ export default function Dashboard({
 
       {/* Floating Action Button */}
       <button
-        onClick={() => setShowUrlModal(true)}
+        onClick={onStartReading}
         className="fixed bottom-6 right-6 w-14 h-14 bg-app-blue hover:bg-app-blue-dark text-white rounded-full shadow-lg hover:shadow-xl transition-all flex items-center justify-center"
       >
         <Plus className="w-6 h-6" />
       </button>
-
-      {/* URL Input Modal */}
-      <Dialog open={showUrlModal} onOpenChange={setShowUrlModal}>
-        <DialogContent className="sm:max-w-[480px] rounded-2xl">
-          <DialogHeader>
-            <DialogTitle>글 링크 입력</DialogTitle>
-            <DialogDescription>
-              읽고 싶은 글의 URL을 입력하세요
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 pt-4">
-            <div>
-              <Label
-                htmlFor="url"
-                className="text-app-gray-500 text-sm mb-2 block"
-              >
-                링크
-              </Label>
-              <Input
-                id="url"
-                type="url"
-                placeholder="https://example.com/article"
-                value={url}
-                onChange={(e) => setUrl(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleSubmitUrl()}
-                className="h-12 border-app-gray-200 rounded-lg focus:ring-2 focus:ring-app-blue focus:border-app-blue"
-              />
-            </div>
-            <div className="flex gap-3 pt-2">
-              <Button
-                variant="outline"
-                onClick={() => setShowUrlModal(false)}
-                className="flex-1 h-11 border-app-gray-200 text-app-gray-500 hover:bg-app-gray-50"
-              >
-                취소
-              </Button>
-              <Button
-                onClick={handleSubmitUrl}
-                disabled={!url.trim()}
-                className="flex-1 h-11 bg-app-blue hover:bg-app-blue-dark text-white"
-              >
-                글 읽기 →
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }

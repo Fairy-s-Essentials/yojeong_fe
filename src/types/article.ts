@@ -9,6 +9,7 @@ export type Article = {
   accuracy?: number;
   userSummary?: string[];
   aiSummary?: string[];
+  learnings?: string;
   feedback?: {
     strengths: string[];
     missed: string[];
