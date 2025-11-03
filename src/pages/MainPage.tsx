@@ -1,5 +1,5 @@
 import { BookOpen } from 'lucide-react';
-import { Header, StatisticCard } from '@/components';
+import { Header, StatisticCard, Button } from '@/components';
 
 export const MainPage = () => {
   return (
@@ -12,9 +12,11 @@ export const MainPage = () => {
         <div className="flex flex-col items-center mb-16">
           <h1 className="text-app-gray-800 mb-3">오늘의 글 읽기</h1>
           <p className="text-app-gray-500 mb-8">AI보다 먼저 읽고, 더 깊게 이해하세요</p>
-          <button className="flex items-center px-4 py-3 gap-2 bg-app-blue hover:bg-app-blue-dark text-white rounded-lg shadow-lg hover:shadow-xl transition-all cursor-pointer">
-            <BookOpen className="w-5 h-5" />새 글 읽기
-          </button>
+          <Button
+            className="px-4 py-6 bg-app-blue hover:bg-app-blue-dark text-white rounded-lg shadow-lg hover:shadow-xl transition-all cursor-pointer"
+          >
+            <BookOpen className="w-5 h-5 mr-2" />새 글 읽기
+          </Button>
         </div>
 
         {/* 학습 통계 영역 */}
@@ -35,9 +37,12 @@ export const MainPage = () => {
           <div className="text-center py-16 bg-app-gray-50 rounded-xl border border-dashed border-app-gray-200">
             <BookOpen className="w-12 h-12 text-app-gray-400 mx-auto mb-4" />
             <p className="text-app-gray-500 mb-4">아직 읽은 글이 없습니다</p>
-            <button className="px-4 py-2 rounded-md border border-app-blue text-app-blue hover:text-app-gray-900 hover:bg-app-blue-light transition-colors cursor-pointer">
+            <Button
+              variant="outline"
+              className="border-app-blue text-app-blue hover:bg-app-blue-light cursor-pointer"
+            >
               첫 글 시작하기
-            </button>
+            </Button>
           </div>
         </div>
       </main>
