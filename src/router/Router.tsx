@@ -1,10 +1,15 @@
-import { createBrowserRouter, RouterProvider } from "react-router";
-import { MainPage } from "../pages/MainPage";
+import { createBrowserRouter, RouterProvider } from 'react-router';
+import { MainPage } from '../pages/MainPage';
+import { OriginalInputPage } from '@/pages/OriginalInputPage';
 
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: '/',
     element: <MainPage />,
+  },
+  {
+    path: '/input',
+    element: <OriginalInputPage />,
   },
 ]);
 
