@@ -4,7 +4,7 @@ import { Header, Button, StatisticCard } from "@/components";
 import {
   useMainAnalysisQuery,
   useMainRecentSummaryQuery,
-} from "@/services/query/main.query";
+} from "@/services/hooks/main";
 
 export const MainPage = () => {
   const navigate = useNavigate();
