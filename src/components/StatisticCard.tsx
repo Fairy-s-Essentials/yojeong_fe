@@ -1,4 +1,3 @@
-import { type ElementType, type SVGProps } from 'react';
 import { TrendingUp, Target, Flame } from 'lucide-react';
 
 interface StatisticCardProps {
@@ -7,42 +6,31 @@ interface StatisticCardProps {
 }
 
 const StatisticCard = ({ type, value }: StatisticCardProps) => {
-  // 카드 타입별 설정
-  let Icon: ElementType<SVGProps<SVGSVGElement>> | null;
-  let iconBgColor: string;
-  let iconColor: string;
-  let valueColor: string;
-  let label: string;
+  const cardConfig = {
+    weekCount: {
+      Icon: TrendingUp,
+      iconBgColor: 'bg-app-blue-light',
+      iconColor: 'text-app-blue',
+      valueColor: 'text-app-blue',
+      label: '이번 주 읽은 글',
+    },
+    accuracy: {
+      Icon: Target,
+      iconBgColor: 'bg-app-green-light',
+      iconColor: 'text-app-green',
+      valueColor: 'text-app-green',
+      label: '평균 정확도',
+    },
+    streak: {
+      Icon: Flame,
+      iconBgColor: 'bg-app-orange-light',
+      iconColor: 'text-app-orange',
+      valueColor: 'text-app-orange',
+      label: '연속 학습 Streak',
+    },
+  };
 
-  switch (type) {
-    case 'weekCount':
-      Icon = TrendingUp;
-      iconBgColor = 'bg-app-blue-light';
-      iconColor = 'text-app-blue';
-      valueColor = 'text-app-blue';
-      label = '이번 주 읽은 글';
-      break;
-    case 'accuracy':
-      Icon = Target;
-      iconBgColor = 'bg-app-green-light';
-      iconColor = 'text-app-green';
-      valueColor = 'text-app-green';
-      label = '평균 정확도';
-      break;
-    case 'streak':
-      Icon = Flame;
-      iconBgColor = 'bg-app-orange-light';
-      iconColor = 'text-app-orange';
-      valueColor = 'text-app-orange';
-      label = '연속 학습 Streak';
-      break;
-    default:
-      Icon = null;
-      iconBgColor = '';
-      iconColor = '';
-      valueColor = '';
-      label = '';
-  }
+  const { Icon, iconBgColor, iconColor, valueColor, label } = cardConfig[type];
 
   return (
     <div className="bg-white rounded-xl p-6 shadow-sm border border-app-gray-200">
