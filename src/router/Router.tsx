@@ -1,6 +1,7 @@
 import { createBrowserRouter, RouterProvider } from 'react-router';
 import { MainPage } from '../pages/MainPage';
 import { OriginalInputPage } from '@/pages/OriginalInputPage';
+import { SummaryInputPage } from '@/pages/SummaryInputPage';
 
 const router = createBrowserRouter([
   {
@@ -10,6 +11,10 @@ const router = createBrowserRouter([
   {
     path: '/input',
     element: <OriginalInputPage />,
+  },
+  {
+    path: '/summary',
+    element: <SummaryInputPage />,
   },
 ]);
 

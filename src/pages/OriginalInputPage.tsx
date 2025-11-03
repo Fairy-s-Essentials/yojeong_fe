@@ -22,7 +22,7 @@ export const OriginalInputPage = () => {
   };
 
   const handleNextPage = () => {
-    navigate('/');
+    navigate('/summary');
   };
 
   return (
@@ -99,25 +99,25 @@ export const OriginalInputPage = () => {
               </p>
             </div>
           </div>
-
-          {/* 버튼 영역 */}
-          <div className="flex gap-4 pt-4">
-            <Button
-              variant="outline"
-              onClick={handleGoBack}
-              className="flex-1 h-12 border-app-gray-200 text-app-gray-600 hover:bg-app-gray-50 cursor-pointer"
-            >
-              취소
-            </Button>
-            <Button
-              disabled={!isValid}
-              onClick={handleNextPage}
-              className="flex-1 h-12 bg-app-blue hover:bg-app-blue-dark text-white disabled:bg-app-gray-200 disabled:text-app-gray-400 disabled:cursor-not-allowed cursor-pointer"
-            >
-              다음 단계로
-              <ArrowRight className="w-5 h-5 ml-2" />
-            </Button>
-          </div>
+        </div>
+        
+        {/* 버튼 영역 */}
+        <div className="w-full flex gap-4 pt-4">
+          <Button
+            variant="outline"
+            onClick={handleGoBack}
+            className="flex-1 h-12 border-app-gray-200 text-app-gray-600 hover:bg-app-gray-50 cursor-pointer"
+          >
+            취소
+          </Button>
+          <Button
+            disabled={!isValid}
+            onClick={handleNextPage}
+            className="flex-1 h-12 bg-app-blue hover:bg-app-blue-dark text-white disabled:bg-app-gray-200 disabled:text-app-gray-400 disabled:cursor-not-allowed cursor-pointer"
+          >
+            다음 단계로
+            <ArrowRight className="w-5 h-5 ml-2" />
+          </Button>
         </div>
       </main>
     </div>
