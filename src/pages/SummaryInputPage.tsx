@@ -165,7 +165,7 @@ export const SummaryInputPage = () => {
                   '요약 작성 필요'
                 )}
               </Button>
-              <div className="flex items-center justify-center gap-2 mt-3 text-xs text-app-red cursor-pointer">
+              <div className="flex items-center justify-center gap-2 mt-3 text-xs text-app-red">
                 <span>⚠️ 제출 후 수정이 불가능합니다</span>
               </div>
             </div>
