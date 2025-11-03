@@ -1,16 +1,24 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { ArrowRight } from 'lucide-react';
 import { ORIGINAL_LENGTH_LIMITS } from '@/constants';
 import { Header, Button, Input, TextArea } from '@/components';
 import { useOriginalValidation } from '@/hooks';
-import { saveOriginalData } from '@/services/storage';
+import { saveOriginalData, getOriginalData } from '@/services/storage';
 
 export const OriginalInputPage = () => {
   const navigate = useNavigate();
 
   const [url, setUrl] = useState<string>('');
   const [content, setContent] = useState<string>('');
+
+  useEffect(() => {
+    const originalData = getOriginalData();
+    if (originalData) {
+      setUrl(originalData.link);
+      setContent(originalData.content);
+    }
+  }, []);
 
   const { contentLength, isValid, isTooShort, isTooLong } = useOriginalValidation({ content });
 
