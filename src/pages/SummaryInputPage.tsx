@@ -1,19 +1,41 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { Check } from 'lucide-react';
 import { SUMMARY_TIPS, CRITICAL_LENGTH_LIMITS } from '@/constants';
 import { Header, Button, TipBox, TextArea } from '@/components';
 import { useSummaryValidation } from '@/hooks';
+import { getOriginalData, clearOriginalData } from '@/services/storage';
 
 export const SummaryInputPage = () => {
   const navigate = useNavigate();
   const randomTip = SUMMARY_TIPS[Math.floor(Math.random() * SUMMARY_TIPS.length)];
 
-  const originalLength = 4500; // 원문 길이 임시 값
+  const [originalLink, setOriginalLink] = useState<string>('');
+  const [originalContent, setOriginalContent] = useState<string>('');
+  const [originalLength, setOriginalLength] = useState<number>(0);
+
+  // 링크 및 원문 확인 - 추후 삭제
+  console.log(originalLink);
+  console.log(originalContent);
+  console.log(originalLength);
 
   const [summary, setSummary] = useState<string>(''); // 나의 요약
   const [weakness, setWeakness] = useState<string>(''); // 이 글의 약점
   const [opposite, setOpposite] = useState<string>(''); // 반대 의견
+
+  // 로컬스토리지에서 원문 데이터 불러오기
+  useEffect(() => {
+    const originalData = getOriginalData();
+
+    if (originalData) {
+      setOriginalLink(originalData.link);
+      setOriginalContent(originalData.content);
+      setOriginalLength(originalData.content.trim().length);
+    } else {
+      // 원문 데이터가 없으면 이전 페이지로 이동
+      navigate('/input');
+    }
+  }, [navigate]);
 
   const { maxSummaryLength, summaryLength, isSummaryOverLimit, isWeaknessOverLimit, isOppositeOverLimit, canSubmit } =
     useSummaryValidation({
@@ -23,8 +45,12 @@ export const SummaryInputPage = () => {
       opposite,
     });
 
-  // TODO: 분석 시작 함수 구현 필요
+  // TODO: 분석 시작 함수 구현 필요 (추후 API 호출 추가)
   const handleSubmit = () => {
+    // 로컬스토리지에서 원문 데이터 삭제
+    clearOriginalData();
+
+    // 임시 페이지 이동
     navigate('/');
   };
 

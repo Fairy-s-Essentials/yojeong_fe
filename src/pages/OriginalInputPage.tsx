@@ -4,6 +4,7 @@ import { ArrowRight } from 'lucide-react';
 import { ORIGINAL_LENGTH_LIMITS } from '@/constants';
 import { Header, Button, Input, TextArea } from '@/components';
 import { useOriginalValidation } from '@/hooks';
+import { saveOriginalData } from '@/services/storage';
 
 export const OriginalInputPage = () => {
   const navigate = useNavigate();
@@ -18,6 +19,7 @@ export const OriginalInputPage = () => {
   };
 
   const handleNextPage = () => {
+    saveOriginalData({ link: url, content });
     navigate('/summary');
   };
 
