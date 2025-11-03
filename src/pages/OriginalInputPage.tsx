@@ -84,7 +84,7 @@ export const OriginalInputPage = () => {
               <div>
                 {isTooShort && (
                   <p className="text-sm text-app-orange">
-                    최소 {ORIGINAL_LENGTH_LIMITS.MIN.toLocaleString()}자 이상 입력해주세요 (현재 {contentLength - ORIGINAL_LENGTH_LIMITS.MIN}자 부족)
+                    최소 {ORIGINAL_LENGTH_LIMITS.MIN.toLocaleString()}자 이상 입력해주세요 (현재 {ORIGINAL_LENGTH_LIMITS.MIN - contentLength}자 부족)
                   </p>
                 )}
                 {isTooLong && <p className="text-sm text-app-red">최대 {ORIGINAL_LENGTH_LIMITS.MAX.toLocaleString()}자까지 입력 가능합니다</p>}
