@@ -12,7 +12,7 @@ export const MainPage = () => {
   return (
     <div className="min-h-screen">
       {/* 헤더 영역 */}
-      <Header />
+      <Header isMainPage />
 
       <main className="flex flex-col items-center max-w-6xl mx-auto px-6 py-12">
         {/* 상단 새 글 읽기 영역 */}
