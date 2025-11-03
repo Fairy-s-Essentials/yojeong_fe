@@ -1,3 +1,9 @@
+// 원문 글자수 제한
+export const ORIGINAL_LENGTH_LIMITS = {
+  MIN: 1000,
+  MAX: 5000,
+};
+
 // 요약 글자수 제한
 export const SUMMARY_LENGTH_LIMITS = {
   SHORT: {
