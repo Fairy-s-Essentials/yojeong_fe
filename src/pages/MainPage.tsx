@@ -13,10 +13,6 @@ export const MainPage = () => {
     navigate("/input");
   };
 
-  // 임시 분석 결과 페이지로 이동
-  const handlePage = () => {
-    navigate("/analysis/1");
-  };
   const { data: mainAnalysis } = useMainAnalysisQuery();
   const { data: mainRecentSummary } = useMainRecentSummaryQuery();
   console.log(mainRecentSummary);
