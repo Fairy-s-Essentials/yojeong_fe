@@ -1,8 +1,11 @@
 import type { DetailSummary, SaveSummaryProps } from "@/types/summary.type";
 import api from ".";
 
-export const saveSummary = async (inputData: SaveSummaryProps) => {
-  const { data } = await api.post("/summary", inputData);
+export const saveSummary = async (
+  inputData: SaveSummaryProps,
+  signal?: AbortSignal
+) => {
+  const { data } = await api.post("/summary", inputData, { signal });
   return data.data;
 };
 

@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router";
 import { Check } from "lucide-react";
 import { SUMMARY_TIPS, CRITICAL_LENGTH_LIMITS } from "@/constants";
-import { Header, Button, TipBox, TextArea } from "@/components";
+import { Header, Button, TipBox, TextArea, LoadingModal } from "@/components";
 import { useSummaryValidation } from "@/hooks";
 import { getOriginalData, clearOriginalData } from "@/services/storage";
 import { useSaveSummary } from "@/services/hooks/summary";
@@ -25,7 +25,8 @@ export const SummaryInputPage = () => {
   const [weakness, setWeakness] = useState<string>(""); // 이 글의 약점
   const [opposite, setOpposite] = useState<string>(""); // 반대 의견
 
-  const { mutate: saveSummaryMutation } = useSaveSummary();
+  const { mutate: saveSummaryMutation, isPending } = useSaveSummary();
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   // 로컬스토리지에서 원문 데이터 불러오기
   useEffect(() => {
@@ -55,25 +56,39 @@ export const SummaryInputPage = () => {
     opposite,
   });
 
-  // TODO: 분석 시작 함수 구현 필요 (추후 API 호출 추가)
+  // 분석 시작 함수
   const handleSubmit = () => {
-    // 로컬스토리지에서 원문 데이터 삭제
+    // AbortController 생성
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
 
     saveSummaryMutation(
       {
-        originalText: originalContent,
-        originalUrl: originalLink,
-        userSummary: summary,
-        criticalWeakness: weakness,
-        criticalOpposite: opposite,
+        data: {
+          originalText: originalContent,
+          originalUrl: originalLink,
+          userSummary: summary,
+          criticalWeakness: weakness,
+          criticalOpposite: opposite,
+        },
+        signal: controller.signal,
       },
       {
         onSuccess: (res) => {
           clearOriginalData();
+          abortControllerRef.current = null;
           navigate("/", { replace: true });
           navigate(`/analysis/${res.resultId}`);
         },
         onError: (error) => {
+          abortControllerRef.current = null;
+
+          // 취소된 경우 에러 처리 안 함
+          if (error instanceof Error && error.name === "CanceledError") {
+            console.log("요약 저장이 취소되었습니다.");
+            return;
+          }
+
           console.error(error);
           alert("요약 저장에 실패하였습니다.");
           navigate("/", { replace: true });
@@ -83,9 +98,25 @@ export const SummaryInputPage = () => {
     );
   };
 
+  // 취소 함수
+  const handleCancel = () => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+    }
+  };
+
   return (
     <div className="min-h-screen">
       <Header />
+
+      {/* 로딩 모달 */}
+      <LoadingModal
+        isOpen={isPending}
+        onCancel={handleCancel}
+        message="AI가 요약을 분석하고 있어요"
+        subMessage="잠시만 기다려주세요..."
+      />
 
       <main className="flex flex-col items-center max-w-4xl mx-auto px-6 py-12">
         {/* 요약 팁 영역 */}
