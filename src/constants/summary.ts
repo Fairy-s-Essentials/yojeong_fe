@@ -23,6 +23,16 @@ export const SUMMARY_LENGTH_LIMITS = {
 // 비판적 읽기 글자수 제한
 export const CRITICAL_LENGTH_LIMITS = 300;
 
+// 배운 점 글자수 제한
+export const LEARNING_LENGTH_LIMITS = 1000;
+
+// 요약 정확도 점수
+export const ACCURACY_SCORE = {
+  HIGH: 80,
+  LOW: 60,
+};
+
+// 요약 팁
 export const SUMMARY_TIPS = [
   '핵심 주장과 근거에 집중하세요. "하지만", "그러나", "반면" 같은 연결어에 주목하면 저자의 논리 구조를 더 잘 파악할 수 있습니다.',
   '글을 읽으면서 저자의 관점에 동의하는지 스스로 질문해보세요. 비판적 사고는 더 깊은 이해로 이어집니다.',

@@ -13,6 +13,10 @@ export const MainPage = () => {
     navigate("/input");
   };
 
+  // 임시 분석 결과 페이지로 이동
+  const handlePage = () => {
+    navigate('/analysis/1');
+  };
   const { data: mainAnalysis } = useMainAnalysisQuery();
   const { data: mainRecentSummary } = useMainRecentSummaryQuery();
 
@@ -51,6 +55,9 @@ export const MainPage = () => {
             value={`${mainAnalysis?.consecutiveDays || 0}일`}
           />
         </div>
+
+        {/* TODO: 분석 결과 페이지 연결 후 버튼 삭제 */}
+        <button onClick={handlePage}>분석 결과 페이지</button>
 
         {/* 최근 요약 기록 영역 */}
         <div className="w-full flex flex-col">
