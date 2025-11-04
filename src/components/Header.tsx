@@ -1,9 +1,13 @@
 import { useNavigate } from 'react-router';
 import { ArrowLeft, BookOpen } from 'lucide-react';
-import { ProfileIcon } from '@/components';
+import { AuthProfileButton, LoginButton } from '@/components';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Header = ({ isMainPage = false }: { isMainPage?: boolean }) => {
   const navigate = useNavigate();
+  const { isLoggedIn, user, isLoading } = useAuth();
+
+  console.log('[Header] 렌더링 - isLoggedIn:', isLoggedIn, 'user:', user, 'isLoading:', isLoading);
 
   const handleLogoButton = () => {
     navigate('/');
@@ -26,8 +30,8 @@ const Header = ({ isMainPage = false }: { isMainPage?: boolean }) => {
               <BookOpen className="w-6 h-6 text-app-blue" />
               요약의 정석
             </button>
-            {/* 프로필 */}
-            <ProfileIcon />
+            {/* 로그인/프로필 */}
+            {isLoggedIn ? <AuthProfileButton /> : <LoginButton />}
           </>
         ) : (
           <>
