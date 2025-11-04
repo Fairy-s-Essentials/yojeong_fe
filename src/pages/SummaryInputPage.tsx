@@ -150,7 +150,7 @@ export const SummaryInputPage = () => {
               <Button
                 disabled={!canSubmit}
                 onClick={handleSubmit}
-                className="w-80 h-13 bg-app-blue hover:bg-app-blue-dark text-white rounded-xl shadow-lg disabled:bg-app-gray-200 disabled:text-app-gray-400 disabled:cursor-not-allowed"
+                className="w-80 h-13 bg-app-blue hover:bg-app-blue-dark text-white rounded-xl shadow-lg disabled:bg-app-gray-200 disabled:text-app-gray-400 disabled:cursor-not-allowed cursor-pointer"
               >
                 {canSubmit ? (
                   <>

@@ -9,6 +9,11 @@ export const MainPage = () => {
     navigate('/input');
   };
 
+  // 임시 분석 결과 페이지로 이동
+  const handlePage = () => {
+    navigate('/analysis/1');
+  };
+
   return (
     <div className="min-h-screen">
       {/* 헤더 영역 */}
@@ -33,6 +38,9 @@ export const MainPage = () => {
           <StatisticCard type="accuracy" value="82%" />
           <StatisticCard type="streak" value="5일" />
         </div>
+
+        {/* TODO: 분석 결과 페이지 연결 후 버튼 삭제 */}
+        <button onClick={handlePage}>분석 결과 페이지</button>
 
         {/* 최근 요약 기록 영역 */}
         <div className="w-full flex flex-col">

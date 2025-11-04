@@ -14,7 +14,7 @@ const Header = ({ isMainPage = false }: { isMainPage?: boolean }) => {
   };
 
   return (
-    <header className="bg-white border-b border-app-gray-200 sticky top-0 z-0 ">
+    <header className="bg-white border-b border-app-gray-200 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
         {isMainPage ? (
           <>

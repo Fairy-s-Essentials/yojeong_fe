@@ -23,6 +23,9 @@ export const SUMMARY_LENGTH_LIMITS = {
 // 비판적 읽기 글자수 제한
 export const CRITICAL_LENGTH_LIMITS = 300;
 
+// 배운 점 글자수 제한
+export const LEARNING_LENGTH_LIMITS = 1000;
+
 // 요약 정확도 점수
 export const ACCURACY_SCORE = {
   HIGH: 80,
