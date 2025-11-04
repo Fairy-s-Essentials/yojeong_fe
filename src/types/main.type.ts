@@ -6,7 +6,7 @@ export interface MainAnalysis {
 
 export interface MainRecentSummary {
   id: number;
-  similarity_score: number;
-  user_summary: string;
-  created_at: string;
+  similarityScore: number;
+  userSummary: string;
+  createdAt: string;
 }
