@@ -68,14 +68,14 @@ export const SummaryInputPage = () => {
         criticalOpposite: opposite,
       },
       {
-        onSuccess: () => {
-          navigate("/");
+        onSuccess: (res) => {
+          clearOriginalData();
+          navigate(`/analysis/${res.resultId}`);
         },
         onError: (error) => {
           console.error(error);
-        },
-        onSettled: () => {
-          clearOriginalData();
+          alert("요약 저장에 실패하였습니다.");
+          navigate("/input");
         },
       }
     );
