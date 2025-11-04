@@ -10,16 +10,38 @@ import {
   TextArea,
 } from "@/components";
 import { useGetDetailSummary } from "@/services/hooks/summary";
+import { useLoading } from "@/contexts";
 
 export const AnalysisPage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const { data: detailSummary } = useGetDetailSummary(parseInt(id!));
+  const {
+    data: detailSummary,
+    isLoading,
+    isError,
+  } = useGetDetailSummary(parseInt(id!));
+  const { hideLoading } = useLoading();
   console.log(detailSummary);
   const [learningNote, setLearningNote] = useState<string>("");
   const isLearningNoteOverLimit = learningNote.length > LEARNING_LENGTH_LIMITS;
 
-  // TODO: 페이지 히스토리 삭제 필요
+  // 로딩 상태 및 에러 처리
+  useEffect(() => {
+    if (isError) {
+      hideLoading();
+      alert("분석 결과를 불러오는데 실패했습니다.");
+      navigate("/");
+    }
+  }, [isError, navigate, hideLoading]);
+
+  // 데이터 로딩 완료 시 로딩 모달 숨기기
+  useEffect(() => {
+    if (detailSummary) {
+      hideLoading();
+      setLearningNote(detailSummary.learningNote || "");
+    }
+  }, [detailSummary, hideLoading]);
+
   const handleGoBack = () => {
     navigate("/");
   };
@@ -29,12 +51,8 @@ export const AnalysisPage = () => {
     navigate("/");
   };
 
-  useEffect(() => {
-    if (detailSummary) {
-      setLearningNote(detailSummary.learningNote || "");
-    }
-  }, [detailSummary]);
-  if (!detailSummary) return <div>Loading...</div>;
+  // 로딩 중이거나 데이터가 없으면 빈 화면 (전역 로딩 모달 표시됨)
+  if (isLoading || !detailSummary) return null;
 
   return (
     <div className="min-h-screen">

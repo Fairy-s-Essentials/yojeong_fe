@@ -2,10 +2,11 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router";
 import { Check } from "lucide-react";
 import { SUMMARY_TIPS, CRITICAL_LENGTH_LIMITS } from "@/constants";
-import { Header, Button, TipBox, TextArea, LoadingModal } from "@/components";
+import { Header, Button, TipBox, TextArea } from "@/components";
 import { useSummaryValidation } from "@/hooks";
 import { getOriginalData, clearOriginalData } from "@/services/storage";
 import { useSaveSummary } from "@/services/hooks/summary";
+import { useLoading } from "@/contexts";
 
 export const SummaryInputPage = () => {
   const navigate = useNavigate();
@@ -25,7 +26,8 @@ export const SummaryInputPage = () => {
   const [weakness, setWeakness] = useState<string>(""); // 이 글의 약점
   const [opposite, setOpposite] = useState<string>(""); // 반대 의견
 
-  const { mutate: saveSummaryMutation, isPending } = useSaveSummary();
+  const { mutate: saveSummaryMutation } = useSaveSummary();
+  const { showLoading, hideLoading } = useLoading();
   const abortControllerRef = useRef<AbortController | null>(null);
 
   // 로컬스토리지에서 원문 데이터 불러오기
@@ -56,11 +58,28 @@ export const SummaryInputPage = () => {
     opposite,
   });
 
+  // 취소 함수
+  const handleCancel = () => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+    }
+    hideLoading();
+  };
+
   // 분석 시작 함수
   const handleSubmit = () => {
     // AbortController 생성
     const controller = new AbortController();
     abortControllerRef.current = controller;
+
+    // 로딩 시작
+    showLoading({
+      message: "AI가 요약을 분석하고 있어요",
+      subMessage: "잠시만 기다려주세요...",
+      showCancelButton: true,
+      onCancel: handleCancel,
+    });
 
     saveSummaryMutation(
       {
@@ -77,11 +96,18 @@ export const SummaryInputPage = () => {
         onSuccess: (res) => {
           clearOriginalData();
           abortControllerRef.current = null;
+          // 로딩 메시지 업데이트 (페이지 전환 시에도 유지)
+          showLoading({
+            message: "분석 결과를 불러오는 중이에요",
+            subMessage: "곧 완료됩니다...",
+            showCancelButton: false,
+          });
           navigate("/", { replace: true });
           navigate(`/analysis/${res.resultId}`);
         },
         onError: (error) => {
           abortControllerRef.current = null;
+          hideLoading();
 
           // 취소된 경우 에러 처리 안 함
           if (error instanceof Error && error.name === "CanceledError") {
@@ -98,25 +124,9 @@ export const SummaryInputPage = () => {
     );
   };
 
-  // 취소 함수
-  const handleCancel = () => {
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-      abortControllerRef.current = null;
-    }
-  };
-
   return (
     <div className="min-h-screen">
       <Header />
-
-      {/* 로딩 모달 */}
-      <LoadingModal
-        isOpen={isPending}
-        onCancel={handleCancel}
-        message="AI가 요약을 분석하고 있어요"
-        subMessage="잠시만 기다려주세요..."
-      />
 
       <main className="flex flex-col items-center max-w-4xl mx-auto px-6 py-12">
         {/* 요약 팁 영역 */}
