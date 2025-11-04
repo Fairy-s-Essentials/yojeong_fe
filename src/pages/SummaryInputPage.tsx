@@ -70,11 +70,13 @@ export const SummaryInputPage = () => {
       {
         onSuccess: (res) => {
           clearOriginalData();
+          navigate("/", { replace: true });
           navigate(`/analysis/${res.resultId}`);
         },
         onError: (error) => {
           console.error(error);
           alert("요약 저장에 실패하였습니다.");
+          navigate("/", { replace: true });
           navigate("/input");
         },
       }
