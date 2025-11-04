@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router";
 import { BookOpen } from "lucide-react";
-import { Header, Button, StatisticCard } from "@/components";
+import { Header, Button, StatisticCard, SummaryItem } from "@/components";
 import {
   useMainAnalysisQuery,
   useMainRecentSummaryQuery,
@@ -15,11 +15,11 @@ export const MainPage = () => {
 
   // 임시 분석 결과 페이지로 이동
   const handlePage = () => {
-    navigate('/analysis/1');
+    navigate("/analysis/1");
   };
   const { data: mainAnalysis } = useMainAnalysisQuery();
   const { data: mainRecentSummary } = useMainRecentSummaryQuery();
-
+  console.log(mainRecentSummary);
   return (
     <div className="min-h-screen">
       {/* 헤더 영역 */}
@@ -68,18 +68,29 @@ export const MainPage = () => {
             </button>
           </div>
 
-          {/* TODO: 최근 기록이 있을 경우 목록 보여주기 구현 */}
-          <div className="text-center py-16 bg-app-gray-50 rounded-xl border border-dashed border-app-gray-200">
-            <BookOpen className="w-12 h-12 text-app-gray-400 mx-auto mb-4" />
-            <p className="text-app-gray-500 mb-4">아직 읽은 글이 없습니다</p>
-            <Button
-              onClick={handleWriteButton}
-              variant="outline"
-              className="border-app-blue text-app-blue hover:bg-app-blue-light cursor-pointer"
-            >
-              첫 글 시작하기
-            </Button>
-          </div>
+          {mainRecentSummary && mainRecentSummary.length > 0 ? (
+            <div className="space-y-4">
+              {mainRecentSummary.map((summary) => (
+                <SummaryItem
+                  key={summary.id}
+                  summary={summary}
+                  onClick={() => navigate(`/analysis/${summary.id}`)}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-16 bg-app-gray-50 rounded-xl border border-dashed border-app-gray-200">
+              <BookOpen className="w-12 h-12 text-app-gray-400 mx-auto mb-4" />
+              <p className="text-app-gray-500 mb-4">아직 읽은 글이 없습니다</p>
+              <Button
+                onClick={handleWriteButton}
+                variant="outline"
+                className="border-app-blue text-app-blue hover:bg-app-blue-light cursor-pointer"
+              >
+                첫 글 시작하기
+              </Button>
+            </div>
+          )}
         </div>
       </main>
     </div>

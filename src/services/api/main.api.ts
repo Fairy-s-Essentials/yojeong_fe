@@ -8,5 +8,6 @@ export const getMainAnalysis = async (): Promise<MainAnalysis> => {
 
 export const getMainRecentSummary = async (): Promise<MainRecentSummary[]> => {
   const { data } = await api.get("/main/recent-summary");
+  console.log(data);
   return data.data;
 };
