@@ -1,75 +1,58 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router';
-import { LEARNING_LENGTH_LIMITS } from '@/constants';
-import { Header, AccuracyResult, Button, SummaryBox, FeedBackBox, TextArea } from '@/components';
-
-// TODO: 추후 types 폴더의 타입으로 연결
-export interface Summary {
-  id: number;
-  userId: number;
-  originalText: string;
-  originalUrl: string | null;
-  userSummary: string;
-  criticalWeakness: string | null;
-  criticalOpposite: string | null;
-  aiSummary: string;
-  similarityScore: number; // 0~100
-  aiWellUnderstood: string[];
-  aiMissedPoints: string[];
-  aiImprovements: string[];
-  learningNote: string | null;
-  createdAt: string;
-
-  // 사용자의 평균 정확도
-  averageScore: number;
-}
-
-const dummy: Summary = {
-  id: 1,
-  userId: 1,
-  originalText: '원문',
-  originalUrl: null,
-  userSummary:
-    'AI가 많은 직업을 대체할 것이지만 새로운 기회도 만든다. 중요한 것은 AI와 경쟁이 아니라 활용하는 능력이며, 평생 학습과 인간 고유의 능력 개발이 필요하다.',
-  criticalWeakness: null,
-  criticalOpposite: null,
-  aiSummary:
-    'AI 기술 발전으로 직업 대체 우려가 있지만, 역사적으로 새 기술은 새로운 기회도 창출했다. AI 시대에는 AI를 활용하는 능력과 인간 고유의 창의성, 공감 능력이 중요하며, 평생 학습이 필요하다.',
-  similarityScore: 80,
-  aiWellUnderstood: [
-    'AI가 일자리를 대체하면서도 새로운 기회를 만든다는 핵심 주장을 잘 파악했습니다.',
-    '평생 학습의 중요성을 언급한 점이 좋습니다.',
-  ],
-  aiMissedPoints: [
-    '산업혁명 시대의 역사적 사례를 언급하지 않았습니다.',
-    '소프트 스킬과 기술적 스킬의 균형에 대한 내용이 빠졌습니다.',
-  ],
-  aiImprovements: [
-    '핵심 주장을 뒷받침하는 구체적 사례나 근거를 포함하면 더 설득력 있는 요약이 됩니다.',
-    '글의 논리적 흐름(문제제기 → 역사적 사례 → 해결책)을 요약에도 반영해보세요.',
-  ],
-  learningNote: null,
-  createdAt: '2025-10-31',
-
-  // 사용자의 평균 정확도
-  averageScore: 0,
-};
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router";
+import { LEARNING_LENGTH_LIMITS } from "@/constants";
+import {
+  Header,
+  AccuracyResult,
+  Button,
+  SummaryBox,
+  FeedBackBox,
+  TextArea,
+} from "@/components";
+import { useGetDetailSummary } from "@/services/hooks/summary";
+import { useLoading } from "@/contexts";
 
 export const AnalysisPage = () => {
   const navigate = useNavigate();
-
-  const [learningNote, setLearningNote] = useState<string>('');
+  const { id } = useParams();
+  const {
+    data: detailSummary,
+    isLoading,
+    isError,
+  } = useGetDetailSummary(parseInt(id!));
+  const { hideLoading } = useLoading();
+  console.log(detailSummary);
+  const [learningNote, setLearningNote] = useState<string>("");
   const isLearningNoteOverLimit = learningNote.length > LEARNING_LENGTH_LIMITS;
 
-  // TODO: 페이지 히스토리 삭제 필요
+  // 로딩 상태 및 에러 처리
+  useEffect(() => {
+    if (isError) {
+      hideLoading();
+      alert("분석 결과를 불러오는데 실패했습니다.");
+      navigate("/");
+    }
+  }, [isError, navigate, hideLoading]);
+
+  // 데이터 로딩 완료 시 로딩 모달 숨기기
+  useEffect(() => {
+    if (detailSummary) {
+      hideLoading();
+      setLearningNote(detailSummary.learningNote || "");
+    }
+  }, [detailSummary, hideLoading]);
+
   const handleGoBack = () => {
-    navigate('/');
+    navigate("/");
   };
 
   // TODO: 완료 버튼 클릭 시 배운 점 저장 api 호출 필요
   const handleComplete = () => {
-    navigate('/');
+    navigate("/");
   };
+
+  // 로딩 중이거나 데이터가 없으면 빈 화면 (전역 로딩 모달 표시됨)
+  if (isLoading || !detailSummary) return null;
 
   return (
     <div className="min-h-screen">
@@ -78,7 +61,10 @@ export const AnalysisPage = () => {
       <main className="flex flex-col items-center max-w-4xl mx-auto px-6 py-12">
         {/* 정확도 점수 영역 */}
         <div className="w-full flex flex-col">
-          <AccuracyResult score={dummy.similarityScore} average={dummy.averageScore} />
+          <AccuracyResult
+            score={detailSummary.similarityScore}
+            average={detailSummary.averageScore}
+          />
         </div>
 
         {/* 요약 비교 영역 */}
@@ -87,11 +73,11 @@ export const AnalysisPage = () => {
           <div className="grid md:grid-cols-2 gap-6">
             <div>
               <h3 className="text-app-gray-800 mb-3">✍️ 당신의 요약</h3>
-              <SummaryBox type="user" summary={dummy.userSummary} />
+              <SummaryBox type="user" summary={detailSummary.userSummary} />
             </div>
             <div>
               <h3 className="text-app-gray-800 mb-3">🤖 AI 요약</h3>
-              <SummaryBox type="ai" summary={dummy.aiSummary} />
+              <SummaryBox type="ai" summary={detailSummary.aiSummary} />
             </div>
           </div>
         </div>
@@ -99,25 +85,42 @@ export const AnalysisPage = () => {
         {/* 피드백 영역 */}
         <div className="w-full space-y-6 mb-12">
           <h2 className="text-lg text-app-gray-800">💬 피드백</h2>
-          <FeedBackBox type="wellUnderstood" value={dummy.aiWellUnderstood} />
-          <FeedBackBox type="missedPoint" value={dummy.aiMissedPoints} />
-          <FeedBackBox type="improvement" value={dummy.aiImprovements} />
+          <FeedBackBox
+            type="wellUnderstood"
+            value={detailSummary.aiWellUnderstood}
+          />
+          <FeedBackBox
+            type="missedPoint"
+            value={detailSummary.aiMissedPoints}
+          />
+          <FeedBackBox
+            type="improvement"
+            value={detailSummary.aiImprovements}
+          />
         </div>
 
         {/* 배운 점 영역 */}
         <div className="w-full mb-12">
           <h3 className="text-app-gray-800 mb-2">💡 배운 점</h3>
-          <p className="text-sm text-app-gray-500 mb-4">이번 글에서 배운 점을 자유롭게 작성하세요.</p>
+          <p className="text-sm text-app-gray-500 mb-4">
+            이번 글에서 배운 점을 자유롭게 작성하세요.
+          </p>
           <TextArea
             value={learningNote}
             onChange={(e) => setLearningNote(e.target.value)}
             placeholder="예: 이번에는 반대 의견을 놓쳤다. 다음에는 '하지만', '반면' 같은 키워드에 주목하자."
             className={`h-32 resize-none border-dashed border-2 rounded-lg ${
-              isLearningNoteOverLimit ? 'border-app-red focus:ring-app-red' : 'border-app-gray-200'
+              isLearningNoteOverLimit
+                ? "border-app-red focus:ring-app-red"
+                : "border-app-gray-200"
             }`}
           />
           <div className="flex justify-end items-center mt-2">
-            <div className={`text-sm ${isLearningNoteOverLimit ? 'text-app-red' : 'text-app-gray-400'}`}>
+            <div
+              className={`text-sm ${
+                isLearningNoteOverLimit ? "text-app-red" : "text-app-gray-400"
+              }`}
+            >
               {learningNote.length} / 1000자
             </div>
           </div>
@@ -137,7 +140,9 @@ export const AnalysisPage = () => {
             disabled={isLearningNoteOverLimit}
             className="flex-1 h-12 bg-app-blue hover:bg-app-blue-dark text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
           >
-            {isLearningNoteOverLimit ? '글자수 초과 (최대 1000자)' : '완료하고 대시보드로 →'}
+            {isLearningNoteOverLimit
+              ? "글자수 초과 (최대 1000자)"
+              : "완료하고 대시보드로 →"}
           </Button>
         </div>
       </main>
