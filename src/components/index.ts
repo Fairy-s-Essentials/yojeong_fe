@@ -16,3 +16,5 @@ export { default as TipBox } from './TipBox';
 
 export * from './Dialog';
 export * from './AlertDialog';
+export * from './LoadingModal';
+export * from './Modal';
