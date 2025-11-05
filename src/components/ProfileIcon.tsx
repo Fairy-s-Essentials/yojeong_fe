@@ -1,10 +1,26 @@
 import { User } from 'lucide-react';
+import type { User as UserType } from '@/types/auth';
 
-// TODO: 프로필 이미지 url이 존재할 경우 추가 구현 / 클릭 시 로그인 모달 표시 추가 구현
-const ProfileIcon = () => {
+interface ProfileIconProps {
+  user?: UserType | null;
+  onClick?: () => void;
+}
+
+const ProfileIcon = ({ user, onClick }: ProfileIconProps) => {
   return (
-    <button className="p-2 hover:bg-app-gray-50 rounded-full transition-colors cursor-pointer">
-      <User className="w-6 h-6 text-app-gray-500" />
+    <button 
+      onClick={onClick}
+      className="p-2 hover:bg-app-gray-50 rounded-full transition-colors cursor-pointer"
+    >
+      {user?.profile_image ? (
+        <img 
+          src={user.profile_image} 
+          alt={user.nickname}
+          className="w-6 h-6 rounded-full object-cover"
+        />
+      ) : (
+        <User className="w-6 h-6 text-app-gray-500" />
+      )}
     </button>
   );
 };
