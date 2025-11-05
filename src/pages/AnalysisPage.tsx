@@ -14,14 +14,17 @@ import { useLoading } from "@/contexts";
 
 export const AnalysisPage = () => {
   const navigate = useNavigate();
+
   const { id } = useParams();
+  const { hideLoading } = useLoading();
+  
   const {
     data: detailSummary,
     isLoading,
     isError,
   } = useGetDetailSummary(parseInt(id!));
-  const { hideLoading } = useLoading();
   console.log(detailSummary);
+
   const [learningNote, setLearningNote] = useState<string>("");
   const isLearningNoteOverLimit = learningNote.length > LEARNING_LENGTH_LIMITS;
 

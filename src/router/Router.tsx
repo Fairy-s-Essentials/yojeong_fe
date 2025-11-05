@@ -3,6 +3,7 @@ import { MainPage } from '@/pages/MainPage';
 import { OriginalInputPage } from '@/pages/OriginalInputPage';
 import { SummaryInputPage } from '@/pages/SummaryInputPage';
 import { AnalysisPage } from '@/pages/AnalysisPage';
+import { HistoryPage } from '@/pages/HistoryPage';
 
 const router = createBrowserRouter([
   {
@@ -20,6 +21,10 @@ const router = createBrowserRouter([
   {
     path: '/analysis/:id',
     element: <AnalysisPage />,
+  },
+  {
+    path: '/history',
+    element: <HistoryPage />,
   },
 ]);
 
