@@ -1,6 +1,7 @@
 import * as React from "react";
 import { createPortal } from "react-dom";
 import { cn } from "@/utils/cn";
+import Button from './Button';
 
 // Context for AlertDialog state management
 interface AlertDialogContextValue {
@@ -210,7 +211,7 @@ function AlertDialogDescription({ className, ...props }: AlertDialogDescriptionP
 
 interface AlertDialogActionProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {}
 
-function AlertDialogAction({ onClick, ...props }: AlertDialogActionProps) {
+function AlertDialogAction({ onClick, className, ...props }: AlertDialogActionProps) {
   const { onOpenChange } = useAlertDialogContext();
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -219,17 +220,19 @@ function AlertDialogAction({ onClick, ...props }: AlertDialogActionProps) {
   };
 
   return (
-    <button 
-      data-slot="alert-dialog-action" 
-      onClick={handleClick} 
-      {...props} 
+    <Button
+      data-slot="alert-dialog-action"
+      onClick={handleClick}
+      variant="destructive"
+      className={className}
+      {...props}
     />
   );
 }
 
 interface AlertDialogCancelProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {}
 
-function AlertDialogCancel({ onClick, ...props }: AlertDialogCancelProps) {
+function AlertDialogCancel({ onClick, className, ...props }: AlertDialogCancelProps) {
   const { onOpenChange } = useAlertDialogContext();
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -238,10 +241,12 @@ function AlertDialogCancel({ onClick, ...props }: AlertDialogCancelProps) {
   };
 
   return (
-    <button 
-      data-slot="alert-dialog-cancel" 
-      onClick={handleClick} 
-      {...props} 
+    <Button
+      data-slot="alert-dialog-cancel"
+      onClick={handleClick}
+      variant="outline"
+      className={className}
+      {...props}
     />
   );
 }
