@@ -5,9 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 
 const Header = ({ isMainPage = false }: { isMainPage?: boolean }) => {
   const navigate = useNavigate();
-  const { isLoggedIn, user, isLoading } = useAuth();
-
-  console.log('[Header] 렌더링 - isLoggedIn:', isLoggedIn, 'user:', user, 'isLoading:', isLoading);
+  const { isLoggedIn } = useAuth();
 
   const handleLogoButton = () => {
     navigate('/');
