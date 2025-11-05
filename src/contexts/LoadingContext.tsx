@@ -5,7 +5,7 @@ import {
   useCallback,
   type ReactNode,
 } from "react";
-import { LoadingModal } from "@/components";
+import LoadingModal from "@/components/LoadingModal";
 
 interface LoadingState {
   isLoading: boolean;
