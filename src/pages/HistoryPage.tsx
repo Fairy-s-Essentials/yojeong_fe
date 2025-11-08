@@ -5,6 +5,7 @@ import Pagination from '@/components/Pagination';
 import { BookOpen } from 'lucide-react';
 import { useNavigate } from 'react-router';
 import type { HistorySummary } from '@/types/main.type';
+import Heatmap from '@/components/Heatmap';
 
 export const HistoryPage = () => {
   const navigate = useNavigate();
@@ -21,12 +22,69 @@ export const HistoryPage = () => {
   const [inputValue, setInputValue] = useState<string>('');
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [, setSortOrder] = useState<string>('latest');
+  const [selectedYear, setSelectedYear] = useState<number>(2024);
 
   const mockHistorySummary: HistorySummary[] = [
     { id: 1, similarityScore: 85, userSummary: '오늘은 좋은 하루였다', createdAt: '2025-10-22' },
     { id: 2, similarityScore: 75, userSummary: '오늘은 나쁜 하루였다', createdAt: '2025-10-23' },
     { id: 3, similarityScore: 65, userSummary: '오늘은 보통 하루였다', createdAt: '2025-10-24' },
   ];
+
+  const staticMockHeatmapData = {
+    years: [2023, 2024, 2025],
+    yearlyLearningData: {
+      year: 2024,
+      learningDays: [
+        { date: '2024-01-05', count: 2, averageScore: 85 },
+        { date: '2024-01-08', count: 1, averageScore: 92 },
+        { date: '2024-01-12', count: 3, averageScore: 78 },
+        { date: '2024-01-15', count: 4, averageScore: 95 },
+        { date: '2024-01-19', count: 2, averageScore: 88 },
+        { date: '2024-01-22', count: 1, averageScore: 91 },
+        { date: '2024-01-26', count: 5, averageScore: 87 },
+        { date: '2024-01-29', count: 3, averageScore: 94 },
+        { date: '2024-02-02', count: 2, averageScore: 82 },
+        { date: '2024-02-05', count: 4, averageScore: 89 },
+        { date: '2024-02-09', count: 1, averageScore: 96 },
+        { date: '2024-02-12', count: 3, averageScore: 84 },
+        { date: '2024-02-16', count: 2, averageScore: 90 },
+        { date: '2024-02-19', count: 5, averageScore: 93 },
+        { date: '2024-02-23', count: 1, averageScore: 86 },
+        { date: '2024-02-26', count: 4, averageScore: 91 },
+        { date: '2024-03-01', count: 2, averageScore: 88 },
+        { date: '2024-03-04', count: 3, averageScore: 95 },
+        { date: '2024-03-08', count: 1, averageScore: 87 },
+        { date: '2024-03-11', count: 2, averageScore: 92 },
+        { date: '2024-03-15', count: 4, averageScore: 89 },
+        { date: '2024-03-18', count: 3, averageScore: 94 },
+        { date: '2024-03-22', count: 1, averageScore: 85 },
+        { date: '2024-03-25', count: 5, averageScore: 90 },
+        { date: '2024-03-29', count: 2, averageScore: 93 },
+        { date: '2024-04-01', count: 3, averageScore: 88 },
+        { date: '2024-04-05', count: 4, averageScore: 91 },
+        { date: '2024-04-08', count: 1, averageScore: 86 },
+        { date: '2024-04-12', count: 2, averageScore: 95 },
+        { date: '2024-04-15', count: 5, averageScore: 87 },
+        { date: '2024-04-19', count: 3, averageScore: 92 },
+        { date: '2024-04-22', count: 2, averageScore: 89 },
+        { date: '2024-04-26', count: 4, averageScore: 94 },
+        { date: '2024-04-29', count: 1, averageScore: 90 },
+        { date: '2024-05-03', count: 3, averageScore: 85 },
+        { date: '2024-05-06', count: 2, averageScore: 93 },
+        { date: '2024-05-10', count: 5, averageScore: 88 },
+        { date: '2024-05-13', count: 4, averageScore: 91 },
+        { date: '2024-05-17', count: 1, averageScore: 86 },
+        { date: '2024-05-20', count: 3, averageScore: 95 },
+        { date: '2024-05-24', count: 2, averageScore: 87 },
+        { date: '2024-05-27', count: 4, averageScore: 92 },
+        { date: '2024-05-31', count: 1, averageScore: 89 },
+      ],
+    },
+  };
+
+  const handleYearChange = (year: number) => {
+    setSelectedYear(year);
+  };
 
   const handleSortOrder = (order: string) => {
     setSortOrder(order);
@@ -59,6 +117,15 @@ export const HistoryPage = () => {
           <StatisticCard type="streak" size="lg" value="12일" />
         </div>
 
+        <div className="bg-white rounded-xl p-8 shadow-sm border border-app-gray-200 mb-12 w-full">
+          <h2 className="text-app-gray-800 mb-6">학습 일정</h2>
+          <Heatmap
+            years={staticMockHeatmapData.years}
+            yearlyLearningData={staticMockHeatmapData.yearlyLearningData}
+            selectedYear={selectedYear}
+            onYearChange={handleYearChange}
+          />
+        </div>
         {/* 학습 기록 영역 */}
         <div className="mb-6 w-full flex flex-col gap-6">
           <div className="w-full flex flex-col">
@@ -79,7 +146,6 @@ export const HistoryPage = () => {
               onChange={(e) => setInputValue(e.target.value)}
             />
           </div>
-
           <div className="space-y-4 mb-8">
             {mockHistorySummary && mockHistorySummary.length > 0 ? (
               <div className="space-y-4">
