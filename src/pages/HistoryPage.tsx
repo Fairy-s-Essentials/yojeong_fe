@@ -1,12 +1,19 @@
 import { useState } from 'react';
-import { Button, Header, SearchBar, SelectBox, StatisticCard, SummaryItem } from '@/components';
-import Toggle from '@/components/Toggle';
-import Pagination from '@/components/Pagination';
+import {
+  Button,
+  Header,
+  SearchBar,
+  SelectBox,
+  StatisticCard,
+  SummaryItem,
+  Toggle,
+  Pagination,
+  LineChart,
+  Heatmap,
+} from '@/components';
 import { BookOpen } from 'lucide-react';
 import { useNavigate } from 'react-router';
 import type { HistorySummary } from '@/types/main.type';
-import LineChart from '@/components/LineChart';
-import Heatmap from '@/components/Heatmap';
 
 export const HistoryPage = () => {
   const navigate = useNavigate();
