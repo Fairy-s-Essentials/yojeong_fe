@@ -34,9 +34,7 @@ const LoadingModal = ({
 
         {/* 메시지 */}
         <div className="text-center mb-8">
-          <h3 className="text-xl font-semibold text-app-gray-800 mb-2">
-            {message}
-          </h3>
+          <h3 className="text-xl font-semibold text-app-gray-800 mb-2">{message}</h3>
           <p className="text-sm text-app-gray-500">{subMessage}</p>
         </div>
 
@@ -62,4 +60,3 @@ const LoadingModal = ({
 };
 
 export default LoadingModal;
-

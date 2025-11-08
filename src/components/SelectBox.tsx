@@ -35,7 +35,7 @@ const SelectBox = ({ value, onChange, options, className }: SelectBoxProps) => {
           'flex w-full items-center justify-between gap-2 rounded-md border border-input bg-input-background px-3 py-2 text-sm text-left whitespace-nowrap',
           'focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none',
           'disabled:cursor-not-allowed disabled:opacity-50',
-          'h-9 transition-colors'
+          'h-9 transition-colors',
         )}
       >
         <span className={cn(!selectedLabel && 'text-muted-foreground')}>{selectedLabel || 'Select...'}</span>
@@ -46,7 +46,7 @@ const SelectBox = ({ value, onChange, options, className }: SelectBoxProps) => {
       {open && (
         <div
           className={cn(
-            'absolute z-50 mt-1 w-full overflow-hidden rounded-md border border-border bg-popover text-popover-foreground shadow-md animate-in fade-in-0 zoom-in-95'
+            'absolute z-50 mt-1 w-full overflow-hidden rounded-md border border-border bg-popover text-popover-foreground shadow-md animate-in fade-in-0 zoom-in-95',
           )}
         >
           <ul className="max-h-60 flex flex-col overflow-y-auto p-1 gap-1">
@@ -56,7 +56,7 @@ const SelectBox = ({ value, onChange, options, className }: SelectBoxProps) => {
                   className={cn(
                     'relative flex w-full items-center justify-between gap-2 px-2 py-1.5 text-sm rounded-sm',
                     'hover:bg-accent hover:text-accent-foreground transition-colors',
-                    value === opt.value && 'bg-accent/60 text-accent-foreground'
+                    value === opt.value && 'bg-accent/60 text-accent-foreground',
                   )}
                   onClick={() => {
                     onChange(opt.value);
