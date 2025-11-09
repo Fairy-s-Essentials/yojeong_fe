@@ -11,8 +11,6 @@ export { default as ProfileIcon } from './ProfileIcon';
 export { default as SearchBar } from './SearchBar';
 export { default as SelectBox } from './SelectBox';
 export { default as LoginButton } from './LoginButton';
-export { default as ProfileIcon } from './ProfileIcon';
-export { default as SearchBar } from './SearchBar';
 export { default as StatisticCard } from './StatisticCard';
 export { default as SummaryBox } from './SummaryBox';
 export { default as SummaryItem } from './SummaryItem';
