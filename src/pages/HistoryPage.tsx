@@ -198,11 +198,7 @@ export const HistoryPage = () => {
                 </Button>
               </div>
             )}
-            <Pagination
-              currentPage={currentPage}
-              totalPages={10}
-              onPageChange={(page: number) => handlePageChange(page)}
-            />
+            <Pagination currentPage={currentPage} totalPages={10} onPageChange={handlePageChange} />
           </div>
         </div>
       </main>

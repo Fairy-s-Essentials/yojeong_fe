@@ -1,3 +1,5 @@
+import { cn } from '@/utils/cn';
+
 interface HeatmapProps {
   years: number[];
   yearlyLearningData: {
@@ -13,8 +15,9 @@ const Heatmap = ({ years, yearlyLearningData, selectedYear, onYearChange }: Heat
   const isDataAvailable = yearlyLearningData.year === selectedYear;
   const learningDays = isDataAvailable ? yearlyLearningData.learningDays : [];
 
-  // 선택된 연도의 365일 데이터 생성
-  const heatmapData = Array.from({ length: 365 }, (_, dayIndex) => {
+  // 선택된 연도의 일 수 만큼 데이터 생성
+  const daysInYear = (year: number) => ((year % 4 === 0 && year % 100 !== 0) || year % 400 === 0 ? 366 : 365);
+  const heatmapData = Array.from({ length: daysInYear(selectedYear) }, (_, dayIndex) => {
     const date = new Date(selectedYear, 0, 1); // selectedYear 사용
     date.setDate(date.getDate() + dayIndex);
     const dateString = date.toISOString().split('T')[0];
@@ -67,7 +70,10 @@ const Heatmap = ({ years, yearlyLearningData, selectedYear, onYearChange }: Heat
                   return (
                     <div
                       key={dayIdx}
-                      className={`w-3 h-3 rounded-sm ${getHeatmapColor(dayData.level)} cursor-pointer hover:ring-2 hover:ring-app-blue transition-all`}
+                      className={cn(
+                        'w-3 h-3 rounded-sm cursor-pointer hover:ring-2 hover:ring-app-blue transition-all',
+                        getHeatmapColor(dayData.level),
+                      )}
                       title={tooltipText}
                     />
                   );
