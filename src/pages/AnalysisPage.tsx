@@ -1,9 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { LEARNING_LENGTH_LIMITS } from '@/constants';
 import { Header, AccuracyResult, Button, SummaryBox, FeedBackBox, TextArea } from '@/components';
-import { useGetDetailSummary } from '@/services/hooks/summary';
+import { useGetDetailSummary, useSaveLearningNote } from '@/services/hooks/summary';
 import { useLoading } from '@/contexts';
+
+type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
 
 export const AnalysisPage = () => {
   const navigate = useNavigate();
@@ -13,9 +15,33 @@ export const AnalysisPage = () => {
 
   const { data: detailSummary, isLoading, isError } = useGetDetailSummary(parseInt(id!));
   console.log(detailSummary);
-
+  const { mutate: saveLearningNote } = useSaveLearningNote();
   const [learningNote, setLearningNote] = useState<string>('');
+  const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle');
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
   const isLearningNoteOverLimit = learningNote.length > LEARNING_LENGTH_LIMITS;
+
+  const handleSaveLearningNote = useCallback(() => {
+    saveLearningNote(
+      { id: parseInt(id!), learningNote },
+      {
+        onSuccess: () => {
+          setSaveStatus('saved');
+          // 2초 후 저장 완료 메시지 숨기기
+          setTimeout(() => {
+            setSaveStatus('idle');
+          }, 2000);
+        },
+        onError: () => {
+          setSaveStatus('error');
+          // 3초 후 에러 메시지 숨기기
+          setTimeout(() => {
+            setSaveStatus('idle');
+          }, 3000);
+        },
+      },
+    );
+  }, [id, learningNote, saveLearningNote]);
 
   // 로딩 상태 및 에러 처리
   useEffect(() => {
@@ -31,8 +57,28 @@ export const AnalysisPage = () => {
     if (detailSummary) {
       hideLoading();
       setLearningNote(detailSummary.learningNote || '');
+      setIsInitialLoad(false);
     }
   }, [detailSummary, hideLoading]);
+
+  // 배운점 자동 저장 (debounce 1초)
+  useEffect(() => {
+    // 초기 로드 시에는 자동 저장하지 않음
+    if (isInitialLoad) return;
+
+    // 글자수 초과 시 자동 저장하지 않음
+    if (isLearningNoteOverLimit) return;
+
+    setSaveStatus('idle');
+    const timer = setTimeout(() => {
+      setSaveStatus('saving');
+      handleSaveLearningNote();
+    }, 1000);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [learningNote, isInitialLoad, isLearningNoteOverLimit, handleSaveLearningNote]);
 
   const handleGoBack = () => {
     navigate('/');
@@ -91,7 +137,12 @@ export const AnalysisPage = () => {
               isLearningNoteOverLimit ? 'border-app-red focus:ring-app-red' : 'border-app-gray-200'
             }`}
           />
-          <div className="flex justify-end items-center mt-2">
+          <div className="flex justify-between items-center mt-2">
+            <div className="text-sm">
+              {saveStatus === 'saving' && <span className="text-app-gray-500">저장 중...</span>}
+              {saveStatus === 'saved' && <span className="text-green-600">✓ 저장 완료</span>}
+              {saveStatus === 'error' && <span className="text-app-red">저장 실패</span>}
+            </div>
             <div className={`text-sm ${isLearningNoteOverLimit ? 'text-app-red' : 'text-app-gray-400'}`}>
               {learningNote.length} / 1000자
             </div>
