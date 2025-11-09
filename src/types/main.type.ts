@@ -10,3 +10,10 @@ export interface MainRecentSummary {
   userSummary: string;
   createdAt: string;
 }
+
+export interface HistorySummary {
+  id: number;
+  similarityScore: number;
+  userSummary: string;
+  createdAt: string;
+}
