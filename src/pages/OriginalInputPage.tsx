@@ -38,7 +38,10 @@ export const OriginalInputPage = () => {
       <main className="flex flex-col items-center max-w-4xl mx-auto px-6 py-12">
         <div className="w-full mb-12">
           <h1 className="text-2xl font-medium mb-3">읽은 글 입력하기</h1>
-          <p className="text-app-gray-500">읽은 글의 원문을 입력해주세요 ({ORIGINAL_LENGTH_LIMITS.MIN.toLocaleString()}자 ~ {ORIGINAL_LENGTH_LIMITS.MAX.toLocaleString()}자)</p>
+          <p className="text-app-gray-500">
+            읽은 글의 원문을 입력해주세요 ({ORIGINAL_LENGTH_LIMITS.MIN.toLocaleString()}자 ~{' '}
+            {ORIGINAL_LENGTH_LIMITS.MAX.toLocaleString()}자)
+          </p>
         </div>
 
         {/* 링크 + 원문 입력 영역 */}
@@ -76,18 +79,23 @@ export const OriginalInputPage = () => {
                 isTooShort
                   ? 'focus:ring-app-orange border-app-orange'
                   : isTooLong
-                  ? 'focus:ring-app-red border-app-red'
-                  : 'focus:ring-app-blue'
+                    ? 'focus:ring-app-red border-app-red'
+                    : 'focus:ring-app-blue'
               }`}
             />
             <div className="flex justify-between items-center mt-2">
               <div>
                 {isTooShort && (
                   <p className="text-sm text-app-orange">
-                    최소 {ORIGINAL_LENGTH_LIMITS.MIN.toLocaleString()}자 이상 입력해주세요 (현재 {ORIGINAL_LENGTH_LIMITS.MIN - contentLength}자 부족)
+                    최소 {ORIGINAL_LENGTH_LIMITS.MIN.toLocaleString()}자 이상 입력해주세요 (현재{' '}
+                    {ORIGINAL_LENGTH_LIMITS.MIN - contentLength}자 부족)
                   </p>
                 )}
-                {isTooLong && <p className="text-sm text-app-red">최대 {ORIGINAL_LENGTH_LIMITS.MAX.toLocaleString()}자까지 입력 가능합니다</p>}
+                {isTooLong && (
+                  <p className="text-sm text-app-red">
+                    최대 {ORIGINAL_LENGTH_LIMITS.MAX.toLocaleString()}자까지 입력 가능합니다
+                  </p>
+                )}
                 {isValid && <p className="text-sm text-app-green">입력 가능한 범위입니다</p>}
               </div>
               <p
@@ -95,10 +103,10 @@ export const OriginalInputPage = () => {
                   isTooShort
                     ? 'text-app-orange'
                     : isTooLong
-                    ? 'text-app-red'
-                    : isValid
-                    ? 'text-app-green'
-                    : 'text-app-gray-400'
+                      ? 'text-app-red'
+                      : isValid
+                        ? 'text-app-green'
+                        : 'text-app-gray-400'
                 }`}
               >
                 {contentLength.toLocaleString()} / {ORIGINAL_LENGTH_LIMITS.MAX.toLocaleString()} 글자
@@ -106,7 +114,7 @@ export const OriginalInputPage = () => {
             </div>
           </div>
         </div>
-        
+
         {/* 버튼 영역 */}
         <div className="w-full flex gap-4 pt-4">
           <Button

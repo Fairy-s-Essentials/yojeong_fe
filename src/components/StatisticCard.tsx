@@ -2,10 +2,11 @@ import { TrendingUp, Target, Flame } from 'lucide-react';
 
 interface StatisticCardProps {
   type: 'weekCount' | 'accuracy' | 'streak';
+  size: 'lg' | 'sm';
   value: string;
 }
 
-const StatisticCard = ({ type, value }: StatisticCardProps) => {
+const StatisticCard = ({ type, size, value }: StatisticCardProps) => {
   const cardConfig = {
     weekCount: {
       Icon: TrendingUp,
@@ -30,14 +31,26 @@ const StatisticCard = ({ type, value }: StatisticCardProps) => {
     },
   };
 
+  const sizeConfig = {
+    lg: {
+      iconSize: 'w-8 h-8',
+      textSize: 'text-4xl mb-1',
+    },
+    sm: {
+      iconSize: 'w-6 h-6',
+      textSize: 'text-lg',
+    },
+  };
+
   const { Icon, iconBgColor, iconColor, valueColor, label } = cardConfig[type];
+  const { iconSize, textSize } = sizeConfig[size];
 
   return (
     <div className="bg-white rounded-xl p-6 shadow-sm border border-app-gray-200">
       <div className="flex items-start justify-between mb-4">
-        <div className={`p-2 rounded-lg ${iconBgColor}`}>{Icon && <Icon className={`w-6 h-6 ${iconColor}`} />}</div>
+        <div className={`p-2 rounded-lg ${iconBgColor}`}>{Icon && <Icon className={`${iconSize} ${iconColor}`} />}</div>
       </div>
-      <div className={`${valueColor} text-lg font-semibold`}>{value}</div>
+      <div className={`${valueColor} ${textSize}`}>{value}</div>
       <p className="text-app-gray-500 text-sm">{label}</p>
     </div>
   );

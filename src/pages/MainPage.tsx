@@ -1,21 +1,23 @@
-import { useNavigate } from "react-router";
-import { BookOpen } from "lucide-react";
-import { Header, Button, StatisticCard, SummaryItem } from "@/components";
-import {
-  useMainAnalysisQuery,
-  useMainRecentSummaryQuery,
-} from "@/services/hooks/main";
+import { useNavigate } from 'react-router';
+import { BookOpen } from 'lucide-react';
+import { Header, Button, StatisticCard, SummaryItem } from '@/components';
+import { useMainAnalysisQuery, useMainRecentSummaryQuery } from '@/services/hooks/main';
 
 export const MainPage = () => {
   const navigate = useNavigate();
 
   const handleWriteButton = () => {
-    navigate("/input");
+    navigate('/input');
+  };
+
+  const handleSeeAllButton = () => {
+    navigate('/history');
   };
 
   const { data: mainAnalysis } = useMainAnalysisQuery();
   const { data: mainRecentSummary } = useMainRecentSummaryQuery();
   console.log(mainRecentSummary);
+
   return (
     <div className="min-h-screen">
       {/* 헤더 영역 */}
@@ -25,9 +27,7 @@ export const MainPage = () => {
         {/* 상단 새 글 읽기 영역 */}
         <div className="flex flex-col items-center mb-16">
           <h1 className="text-app-gray-800 mb-3">오늘의 글 읽기</h1>
-          <p className="text-app-gray-500 mb-8">
-            AI보다 먼저 읽고, 더 깊게 이해하세요
-          </p>
+          <p className="text-app-gray-500 mb-8">AI보다 먼저 읽고, 더 깊게 이해하세요</p>
           <Button
             onClick={handleWriteButton}
             className="px-4 py-6 bg-app-blue hover:bg-app-blue-dark text-white rounded-lg shadow-lg hover:shadow-xl transition-all cursor-pointer"
@@ -38,25 +38,16 @@ export const MainPage = () => {
 
         {/* 학습 통계 영역 */}
         <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
-          <StatisticCard
-            type="weekCount"
-            value={`${mainAnalysis?.weeklyCount || 0}개`}
-          />
-          <StatisticCard
-            type="accuracy"
-            value={`${mainAnalysis?.averageScore || 0}%`}
-          />
-          <StatisticCard
-            type="streak"
-            value={`${mainAnalysis?.consecutiveDays || 0}일`}
-          />
+          <StatisticCard type="weekCount" size="sm" value={`${mainAnalysis?.weeklyCount || 0}개`} />
+          <StatisticCard type="accuracy" size="sm" value={`${mainAnalysis?.averageScore || 0}%`} />
+          <StatisticCard type="streak" size="sm" value={`${mainAnalysis?.consecutiveDays || 0}일`} />
         </div>
 
         {/* 최근 요약 기록 영역 */}
         <div className="w-full flex flex-col">
           <div className="flex items-center justify-between mb-6">
             <h2>최근 기록</h2>
-            <button className="text-app-blue hover:text-app-blue-dark cursor-pointer">
+            <button onClick={handleSeeAllButton} className="text-app-blue hover:text-app-blue-dark cursor-pointer">
               전체 보기 →
             </button>
           </div>
@@ -64,11 +55,7 @@ export const MainPage = () => {
           {mainRecentSummary && mainRecentSummary.length > 0 ? (
             <div className="space-y-4">
               {mainRecentSummary.map((summary) => (
-                <SummaryItem
-                  key={summary.id}
-                  summary={summary}
-                  onClick={() => navigate(`/analysis/${summary.id}`)}
-                />
+                <SummaryItem key={summary.id} summary={summary} onClick={() => navigate(`/analysis/${summary.id}`)} />
               ))}
             </div>
           ) : (

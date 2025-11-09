@@ -1,11 +1,5 @@
-import {
-  createContext,
-  useContext,
-  useState,
-  useCallback,
-  type ReactNode,
-} from "react";
-import LoadingModal from "@/components/LoadingModal";
+import { createContext, useContext, useState, useCallback, type ReactNode } from 'react';
+import { LoadingModal } from '@/components';
 
 interface LoadingState {
   isLoading: boolean;
@@ -16,37 +10,32 @@ interface LoadingState {
 }
 
 interface LoadingContextValue {
-  showLoading: (options?: Partial<Omit<LoadingState, "isLoading">>) => void;
+  showLoading: (options?: Partial<Omit<LoadingState, 'isLoading'>>) => void;
   hideLoading: () => void;
-  updateLoading: (options: Partial<Omit<LoadingState, "isLoading">>) => void;
+  updateLoading: (options: Partial<Omit<LoadingState, 'isLoading'>>) => void;
 }
 
-const LoadingContext = createContext<LoadingContextValue | undefined>(
-  undefined
-);
+const LoadingContext = createContext<LoadingContextValue | undefined>(undefined);
 
 export const LoadingProvider = ({ children }: { children: ReactNode }) => {
   const [loadingState, setLoadingState] = useState<LoadingState>({
     isLoading: false,
-    message: "처리 중입니다...",
-    subMessage: "잠시만 기다려주세요...",
+    message: '처리 중입니다...',
+    subMessage: '잠시만 기다려주세요...',
     showCancelButton: false,
     onCancel: undefined,
   });
 
-  const showLoading = useCallback(
-    (options?: Partial<Omit<LoadingState, "isLoading">>) => {
-      setLoadingState((prev) => ({
-        ...prev,
-        isLoading: true,
-        message: options?.message ?? "처리 중입니다...",
-        subMessage: options?.subMessage ?? "잠시만 기다려주세요...",
-        showCancelButton: options?.showCancelButton ?? false,
-        onCancel: options?.onCancel,
-      }));
-    },
-    []
-  );
+  const showLoading = useCallback((options?: Partial<Omit<LoadingState, 'isLoading'>>) => {
+    setLoadingState((prev) => ({
+      ...prev,
+      isLoading: true,
+      message: options?.message ?? '처리 중입니다...',
+      subMessage: options?.subMessage ?? '잠시만 기다려주세요...',
+      showCancelButton: options?.showCancelButton ?? false,
+      onCancel: options?.onCancel,
+    }));
+  }, []);
 
   const hideLoading = useCallback(() => {
     setLoadingState((prev) => ({
@@ -56,20 +45,15 @@ export const LoadingProvider = ({ children }: { children: ReactNode }) => {
     }));
   }, []);
 
-  const updateLoading = useCallback(
-    (options: Partial<Omit<LoadingState, "isLoading">>) => {
-      setLoadingState((prev) => ({
-        ...prev,
-        ...options,
-      }));
-    },
-    []
-  );
+  const updateLoading = useCallback((options: Partial<Omit<LoadingState, 'isLoading'>>) => {
+    setLoadingState((prev) => ({
+      ...prev,
+      ...options,
+    }));
+  }, []);
 
   return (
-    <LoadingContext.Provider
-      value={{ showLoading, hideLoading, updateLoading }}
-    >
+    <LoadingContext.Provider value={{ showLoading, hideLoading, updateLoading }}>
       {children}
 
       {/* 전역 로딩 모달 */}
@@ -87,8 +71,7 @@ export const LoadingProvider = ({ children }: { children: ReactNode }) => {
 export const useLoading = () => {
   const context = useContext(LoadingContext);
   if (!context) {
-    throw new Error("useLoading must be used within LoadingProvider");
+    throw new Error('useLoading must be used within LoadingProvider');
   }
   return context;
 };
-

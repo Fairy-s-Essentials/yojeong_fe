@@ -1,5 +1,5 @@
-import { type ReactNode, useEffect } from "react";
-import { X } from "lucide-react";
+import { type ReactNode, useEffect } from 'react';
+import { X } from 'lucide-react';
 
 interface ModalProps {
   isOpen: boolean;
@@ -9,37 +9,31 @@ interface ModalProps {
   className?: string;
 }
 
-const Modal = ({
-  isOpen,
-  onClose,
-  children,
-  showCloseButton = false,
-  className = "",
-}: ModalProps) => {
+const Modal = ({ isOpen, onClose, children, showCloseButton = false, className = '' }: ModalProps) => {
   // ESC 키로 모달 닫기
   useEffect(() => {
     if (!isOpen || !onClose) return;
 
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
+      if (e.key === 'Escape') {
         onClose();
       }
     };
 
-    document.addEventListener("keydown", handleEscape);
-    return () => document.removeEventListener("keydown", handleEscape);
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
   }, [isOpen, onClose]);
 
   // 스크롤 방지
   useEffect(() => {
     if (isOpen) {
-      document.body.style.overflow = "hidden";
+      document.body.style.overflow = 'hidden';
     } else {
-      document.body.style.overflow = "unset";
+      document.body.style.overflow = 'unset';
     }
 
     return () => {
-      document.body.style.overflow = "unset";
+      document.body.style.overflow = 'unset';
     };
   }, [isOpen]);
 
