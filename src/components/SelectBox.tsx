@@ -1,11 +1,12 @@
 import { useState, useRef, useEffect } from 'react';
 import { ChevronDown, Check } from 'lucide-react';
 import { cn } from '@/utils/cn';
+import type { HistoryPeriod } from '@/types/history.type';
 
 interface SelectBoxProps {
-  value: string | number;
-  onChange: (value: string | number) => void;
-  options: { value: string | number; label: string }[];
+  value: HistoryPeriod;
+  onChange: (value: HistoryPeriod) => void;
+  options: { value: HistoryPeriod; label: string }[];
   className?: string;
 }
 

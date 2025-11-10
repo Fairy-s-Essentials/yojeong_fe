@@ -1,5 +1,5 @@
 import api from './index';
-import type { AuthResponse } from '@/types/auth';
+import type { AuthResponse } from '@/types/auth.type';
 
 // 현재 로그인 사용자 정보 조회
 export const checkAuth = async (): Promise<AuthResponse> => {
@@ -17,4 +17,3 @@ export const logout = async (): Promise<AuthResponse> => {
 export const startKakaoLogin = (): void => {
   window.location.href = `${api.defaults.baseURL}/auth/kakao`;
 };
-

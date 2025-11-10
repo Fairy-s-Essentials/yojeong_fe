@@ -1,11 +1,9 @@
+import type { CalendarData } from '@/types/history.type';
 import { cn } from '@/utils/cn';
 
 interface HeatmapProps {
   years: number[];
-  yearlyLearningData: {
-    year: number;
-    learningDays: { date: string; count: number; averageScore: number }[];
-  };
+  yearlyLearningData: CalendarData;
   selectedYear: number;
   onYearChange: (year: number) => void;
 }
@@ -22,7 +20,7 @@ const Heatmap = ({ years, yearlyLearningData, selectedYear, onYearChange }: Heat
     date.setDate(date.getDate() + dayIndex);
     const dateString = date.toISOString().split('T')[0];
 
-    const dayData = learningDays.find((day) => day.date === dateString);
+    const dayData = learningDays.find((day) => day.date.split('T')[0] === dateString);
     if (!dayData) return { level: 0, count: 0, averageScore: 0 };
 
     // count를 level로 변환 (0-4)
@@ -57,14 +55,14 @@ const Heatmap = ({ years, yearlyLearningData, selectedYear, onYearChange }: Heat
               <div key={weekIdx} className="flex flex-col gap-1">
                 {Array.from({ length: 7 }, (_, dayIdx) => {
                   const idx = weekIdx * 7 + dayIdx;
-                  if (idx >= 365) return null;
+                  if (idx >= heatmapData.length) return null;
                   const dayData = heatmapData[idx];
                   const date = new Date(selectedYear, 0, 1);
                   date.setDate(date.getDate() + idx);
 
                   const tooltipText =
                     dayData.count && dayData.count > 0
-                      ? `${date.toLocaleDateString('ko-KR')}\n학습 횟수: ${dayData.count}개\n평균 점수: ${dayData.averageScore}%`
+                      ? `${date.toLocaleDateString('ko-KR')}\n학습 횟수: ${dayData.count}개\n평균 점수: ${Math.round(dayData.averageScore)}%`
                       : `${date.toLocaleDateString('ko-KR')}\n학습 기록 없음`;
 
                   return (
