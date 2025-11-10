@@ -41,3 +41,16 @@ export interface AccuracyTrendResponse {
   success: boolean;
   data: AccuracyTrend;
 }
+
+/**
+ * 캘린더 연도 목록
+ * @years 학습 기록이 존재하는 연도
+ */
+export interface CalendarYears {
+  years: number[];
+}
+
+export interface CalendarYearsResponse {
+  success: boolean;
+  data: CalendarYears;
+}
