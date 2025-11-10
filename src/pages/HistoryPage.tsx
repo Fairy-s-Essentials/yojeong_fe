@@ -13,12 +13,12 @@ import {
 } from '@/components';
 import { BookOpen } from 'lucide-react';
 import { useNavigate } from 'react-router';
-import type { HistorySummary } from '@/types/main.type';
 import {
   useAccuracyTrendQuery,
   useCalendarDataQuery,
   useCalendarYearsQuery,
   useHistoryAnalysisQuery,
+  useSummariesQuery,
 } from '@/services/hooks/history';
 import type { HistoryPeriod } from '@/types/history.type';
 
@@ -36,13 +36,19 @@ export const HistoryPage = () => {
   const [period, setPeriod] = useState<HistoryPeriod>(7);
   const [inputValue, setInputValue] = useState<string>('');
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [, setSortOrder] = useState<string>('latest');
+  const [isLatest, setIsLatest] = useState<boolean>(true);
   const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
 
   const { data: historyAnalysis } = useHistoryAnalysisQuery(period);
   const { data: accuracyTrend } = useAccuracyTrendQuery(period);
   const { data: calendarYears } = useCalendarYearsQuery();
   const { data: calendarData } = useCalendarDataQuery(selectedYear);
+  const { data: summariesData } = useSummariesQuery({
+    page: currentPage,
+    limit: 5,
+    isLatest,
+    search: inputValue || undefined,
+  });
 
   const handlePeriodChange = (value: HistoryPeriod) => {
     setPeriod(value);
@@ -50,18 +56,13 @@ export const HistoryPage = () => {
 
   const chartData = accuracyTrend?.dataPoints.map((data) => ({ date: data.date, accuracy: data.averageScore })) || [];
 
-  const mockHistorySummary: HistorySummary[] = [
-    { id: 1, similarityScore: 85, userSummary: '오늘은 좋은 하루였다', createdAt: '2025-10-22' },
-    { id: 2, similarityScore: 75, userSummary: '오늘은 나쁜 하루였다', createdAt: '2025-10-23' },
-    { id: 3, similarityScore: 65, userSummary: '오늘은 보통 하루였다', createdAt: '2025-10-24' },
-  ];
-
   const handleYearChange = (year: number) => {
     setSelectedYear(year);
   };
 
-  const handleSortOrder = (order: string) => {
-    setSortOrder(order);
+  const handleSortOrder = (order: 'latest' | 'oldest') => {
+    setIsLatest(order === 'latest');
+    setCurrentPage(1);
   };
 
   const handlePageChange = (page: number) => {
@@ -128,9 +129,9 @@ export const HistoryPage = () => {
             />
           </div>
           <div className="space-y-4 mb-8">
-            {mockHistorySummary && mockHistorySummary.length > 0 ? (
+            {summariesData && summariesData.items.length > 0 ? (
               <div className="space-y-4">
-                {mockHistorySummary.map((summary) => (
+                {summariesData.items.map((summary) => (
                   <SummaryItem key={summary.id} summary={summary} onClick={() => handleAnalysisButton(summary.id)} />
                 ))}
               </div>
@@ -147,7 +148,11 @@ export const HistoryPage = () => {
                 </Button>
               </div>
             )}
-            <Pagination currentPage={currentPage} totalPages={10} onPageChange={handlePageChange} />
+            <Pagination
+              currentPage={currentPage}
+              totalPages={summariesData?.pagination.totalPages || 1}
+              onPageChange={handlePageChange}
+            />
           </div>
         </div>
       </main>
