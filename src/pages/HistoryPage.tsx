@@ -14,6 +14,8 @@ import {
 import { BookOpen } from 'lucide-react';
 import { useNavigate } from 'react-router';
 import type { HistorySummary } from '@/types/main.type';
+import { useHistoryAnalysisQuery } from '@/services/hooks/history';
+import type { HistoryPeriod } from '@/types/history.type';
 
 export const HistoryPage = () => {
   const navigate = useNavigate();
@@ -26,11 +28,17 @@ export const HistoryPage = () => {
     navigate(`/analysis/${id}`);
   };
 
-  const [dateRange, setDateRange] = useState<string | number>(7);
+  const [period, setPeriod] = useState<HistoryPeriod>(7);
   const [inputValue, setInputValue] = useState<string>('');
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [, setSortOrder] = useState<string>('latest');
   const [selectedYear, setSelectedYear] = useState<number>(2024);
+
+  const { data: historyAnalysis } = useHistoryAnalysisQuery(period);
+
+  const handlePeriodChange = (value: HistoryPeriod) => {
+    setPeriod(value);
+  };
 
   const mockChartData = [
     { date: '10/22', accuracy: 65 },
@@ -119,7 +127,7 @@ export const HistoryPage = () => {
     setCurrentPage(page);
   };
 
-  const dateOptions = [
+  const dateOptions: { value: HistoryPeriod; label: string }[] = [
     { value: 7, label: '최근 7일' },
     { value: 30, label: '최근 30일' },
     { value: 'all', label: '전체 기간' },
@@ -132,14 +140,14 @@ export const HistoryPage = () => {
       <main className="flex flex-col items-center max-w-6xl mx-auto px-6 py-10">
         {/* 드롭 다운 영역 */}
         <div className="w-full flex justify-end mb-6">
-          <SelectBox value={dateRange} onChange={setDateRange} options={dateOptions} />
+          <SelectBox value={period} onChange={handlePeriodChange} options={dateOptions} />
         </div>
 
         {/* 학습 통계 영역 */}
         <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
-          <StatisticCard type="weekCount" size="lg" value="0개" />
-          <StatisticCard type="accuracy" size="lg" value="0%" />
-          <StatisticCard type="streak" size="lg" value="12일" />
+          <StatisticCard type="weekCount" size="lg" value={historyAnalysis?.summaryCount.toString() || '0개'} />
+          <StatisticCard type="accuracy" size="lg" value={historyAnalysis?.averageScore.toString() || '0%'} />
+          <StatisticCard type="streak" size="lg" value={historyAnalysis?.consecutiveDays.toString() || '0일'} />
         </div>
 
         <div className="bg-white rounded-xl p-8 shadow-sm border border-app-gray-200 mb-12 w-full">
