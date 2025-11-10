@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getAccuracyTrend, getCalendarYears, getHistoryAnalysis } from '../api/history.api';
+import { getAccuracyTrend, getCalendarData, getCalendarYears, getHistoryAnalysis } from '../api/history.api';
 import type { HistoryPeriod } from '@/types/history.type';
 
 export const useHistoryAnalysisQuery = (period: HistoryPeriod = 7) => {
@@ -20,5 +20,12 @@ export const useCalendarYearsQuery = () => {
   return useQuery({
     queryKey: ['calendarYears'],
     queryFn: getCalendarYears,
+  });
+};
+
+export const useCalendarDataQuery = (year: number = new Date().getFullYear()) => {
+  return useQuery({
+    queryKey: ['calendarData', year],
+    queryFn: () => getCalendarData(year),
   });
 };

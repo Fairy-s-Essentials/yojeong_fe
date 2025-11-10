@@ -1,3 +1,5 @@
+import type { ApiResponse } from './api.type';
+
 export type HistoryPeriod = 7 | 30 | 'all';
 
 /**
@@ -12,10 +14,7 @@ export interface HistoryAnalysis {
   consecutiveDays: number;
 }
 
-export interface HistoryAnalysisResponse {
-  success: boolean;
-  data: HistoryAnalysis;
-}
+export interface HistoryAnalysisResponse extends ApiResponse<HistoryAnalysis> {}
 
 /**
  * 정확도 추이 데이터 포인트
@@ -37,10 +36,7 @@ export interface AccuracyTrend {
   dataPoints: AccuracyDataPoint[];
 }
 
-export interface AccuracyTrendResponse {
-  success: boolean;
-  data: AccuracyTrend;
-}
+export interface AccuracyTrendResponse extends ApiResponse<AccuracyTrend> {}
 
 /**
  * 캘린더 연도 목록
@@ -50,7 +46,28 @@ export interface CalendarYears {
   years: number[];
 }
 
-export interface CalendarYearsResponse {
-  success: boolean;
-  data: CalendarYears;
+export interface CalendarYearsResponse extends ApiResponse<CalendarYears> {}
+
+/**
+ * 학습 일자 데이터
+ * @date 날짜 "YYYY-MM-DD"
+ * @count 해당 날짜 학습 횟수
+ * @averageScore 해당 날짜 평균 점수
+ */
+export interface LearningDay {
+  date: string;
+  count: number;
+  averageScore: number;
 }
+
+/**
+ * 캘린더 데이터
+ * @year 연도
+ * @learningDays 학습 일자 목록
+ */
+export interface CalendarData {
+  year: number;
+  learningDays: LearningDay[];
+}
+
+export interface CalendarDataResponse extends ApiResponse<CalendarData> {}
