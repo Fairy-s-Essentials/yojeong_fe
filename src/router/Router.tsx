@@ -5,6 +5,7 @@ import { SummaryInputPage } from '@/pages/SummaryInputPage';
 import { AnalysisPage } from '@/pages/AnalysisPage';
 import { HistoryPage } from '@/pages/HistoryPage';
 import { AuthCallbackPage } from '@/pages/AuthCallbackPage';
+import { ProtectedRoute } from '@/components';
 
 const router = createBrowserRouter([
   {
@@ -13,23 +14,39 @@ const router = createBrowserRouter([
   },
   {
     path: '/input',
-    element: <OriginalInputPage />,
+    element: (
+      <ProtectedRoute>
+        <OriginalInputPage />
+      </ProtectedRoute>
+    ),
   },
   {
     path: '/summary',
-    element: <SummaryInputPage />,
+    element: (
+      <ProtectedRoute>
+        <SummaryInputPage />
+      </ProtectedRoute>
+    ),
   },
   {
     path: '/analysis/:id',
-    element: <AnalysisPage />,
-  },  
+    element: (
+      <ProtectedRoute>
+        <AnalysisPage />
+      </ProtectedRoute>
+    ),
+  },
   {
     path: '/auth/callback',
     element: <AuthCallbackPage />,
   },
   {
     path: '/history',
-    element: <HistoryPage />,
+    element: (
+      <ProtectedRoute>
+        <HistoryPage />
+      </ProtectedRoute>
+    ),
   },
 ]);
 

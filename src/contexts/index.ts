@@ -1,2 +1,2 @@
-export { LoadingProvider, useLoading } from "./LoadingContext";
-
+export { LoadingProvider, useLoading } from './LoadingContext';
+export { AuthProvider } from './auth/AuthProvider';

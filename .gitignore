@@ -24,3 +24,6 @@ dist-ssr
 *.sw?
 
 .pnpm-store
+
+# Environment variables
+.env*

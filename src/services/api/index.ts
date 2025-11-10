@@ -1,7 +1,6 @@
-import axios, { AxiosError, type AxiosInstance } from "axios";
+import axios, { AxiosError, type AxiosInstance } from 'axios';
 
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 // Axios 인스턴스 생성 (세션 기반 인증)
 const api: AxiosInstance = axios.create({
@@ -9,7 +8,7 @@ const api: AxiosInstance = axios.create({
   timeout: 10000,
   withCredentials: true, // 세션 쿠키를 위해 필수!
   headers: {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
   },
 });
 
@@ -20,7 +19,7 @@ api.interceptors.response.use(
   },
   (error: AxiosError) => {
     return Promise.reject(error);
-  }
+  },
 );
 
 export default api;

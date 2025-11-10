@@ -2,15 +2,25 @@ import { useNavigate } from 'react-router';
 import { BookOpen } from 'lucide-react';
 import { Header, Button, StatisticCard, SummaryItem } from '@/components';
 import { useMainAnalysisQuery, useMainRecentSummaryQuery } from '@/services/hooks/main';
+import { useAuth } from '@/hooks/auth/useAuth';
 
 export const MainPage = () => {
   const navigate = useNavigate();
+  const { isLoggedIn, openLoginModal } = useAuth();
 
   const handleWriteButton = () => {
+    if (!isLoggedIn) {
+      openLoginModal();
+      return;
+    }
     navigate('/input');
   };
 
   const handleSeeAllButton = () => {
+    if (!isLoggedIn) {
+      openLoginModal();
+      return;
+    }
     navigate('/history');
   };
 
