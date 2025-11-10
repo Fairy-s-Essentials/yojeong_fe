@@ -1,5 +1,9 @@
 import type { ApiResponse } from './api.type';
 
+export interface UserResponse {
+  user: User;
+}
+
 export interface User {
   id: number;
   kakao_id: number;
@@ -8,4 +12,4 @@ export interface User {
   profile_image?: string;
 }
 
-export interface AuthResponse extends ApiResponse<User> {}
+export interface AuthResponse extends ApiResponse<UserResponse> {}
