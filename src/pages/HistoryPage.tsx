@@ -14,7 +14,7 @@ import {
 import { BookOpen } from 'lucide-react';
 import { useNavigate } from 'react-router';
 import type { HistorySummary } from '@/types/main.type';
-import { useAccuracyTrendQuery, useHistoryAnalysisQuery } from '@/services/hooks/history';
+import { useAccuracyTrendQuery, useCalendarYearsQuery, useHistoryAnalysisQuery } from '@/services/hooks/history';
 import type { HistoryPeriod } from '@/types/history.type';
 
 export const HistoryPage = () => {
@@ -36,6 +36,7 @@ export const HistoryPage = () => {
 
   const { data: historyAnalysis } = useHistoryAnalysisQuery(period);
   const { data: accuracyTrend } = useAccuracyTrendQuery(period);
+  const { data: calendarYears } = useCalendarYearsQuery();
 
   const handlePeriodChange = (value: HistoryPeriod) => {
     setPeriod(value);
@@ -146,7 +147,7 @@ export const HistoryPage = () => {
         <div className="bg-white rounded-xl p-8 shadow-sm border border-app-gray-200 mb-12 w-full">
           <h2 className="text-app-gray-800 mb-6">학습 일정</h2>
           <Heatmap
-            years={staticMockHeatmapData.years}
+            years={calendarYears?.years || []}
             yearlyLearningData={staticMockHeatmapData.yearlyLearningData}
             selectedYear={selectedYear}
             onYearChange={handleYearChange}
