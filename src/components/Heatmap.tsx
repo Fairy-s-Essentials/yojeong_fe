@@ -62,7 +62,7 @@ const Heatmap = ({ years, yearlyLearningData, selectedYear, onYearChange }: Heat
 
                   const tooltipText =
                     dayData.count && dayData.count > 0
-                      ? `${date.toLocaleDateString('ko-KR')}\n학습 횟수: ${dayData.count}개\n평균 점수: ${Math.round(Number(dayData.averageScore))}%`
+                      ? `${date.toLocaleDateString('ko-KR')}\n학습 횟수: ${dayData.count}개\n평균 점수: ${Math.round(dayData.averageScore)}%`
                       : `${date.toLocaleDateString('ko-KR')}\n학습 기록 없음`;
 
                   return (
