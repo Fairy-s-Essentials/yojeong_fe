@@ -1,8 +1,7 @@
 import { useState, useEffect, type ReactNode } from 'react';
 import { checkAuth, logout } from '@/services/api/auth.api';
 import type { User } from '@/types/auth';
-import LoginModal from '@/components/LoginModal';
-import LogoutAlert from '@/components/LogoutAlert';
+import { LoginModal, LogoutModal } from '@/components';
 import { AuthContext, type AuthContextValue } from './AuthContext';
 
 interface AuthProviderProps {
@@ -79,7 +78,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     <AuthContext.Provider value={value}>
       {children}
       <LoginModal isOpen={isLoginModalOpen} onClose={closeLoginModal} />
-      <LogoutAlert isOpen={isLogoutAlertOpen} onClose={closeLogoutAlert} onLogout={handleLogout} />
+      <LogoutModal isOpen={isLogoutAlertOpen} onClose={closeLogoutAlert} onLogout={handleLogout} />
     </AuthContext.Provider>
   );
 };

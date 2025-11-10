@@ -15,7 +15,7 @@ interface LogoutAlertProps {
   onLogout: () => void;
 }
 
-const LogoutAlert = ({ isOpen, onClose, onLogout }: LogoutAlertProps) => {
+const LogoutModal = ({ isOpen, onClose, onLogout }: LogoutAlertProps) => {
   return (
     <AlertDialog open={isOpen} onOpenChange={onClose}>
       <AlertDialogContent>
@@ -24,12 +24,14 @@ const LogoutAlert = ({ isOpen, onClose, onLogout }: LogoutAlertProps) => {
           <AlertDialogDescription>정말 로그아웃 하시겠습니까?</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>취소</AlertDialogCancel>
-          <AlertDialogAction onClick={onLogout}>로그아웃</AlertDialogAction>
+          <AlertDialogCancel className="cursor-pointer">취소</AlertDialogCancel>
+          <AlertDialogAction className="cursor-pointer" onClick={onLogout}>
+            로그아웃
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
   );
 };
 
-export default LogoutAlert;
+export default LogoutModal;

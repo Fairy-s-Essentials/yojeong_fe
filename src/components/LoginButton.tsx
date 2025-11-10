@@ -5,7 +5,7 @@ const LoginButton = () => {
   const { openLoginModal } = useAuth();
 
   return (
-    <Button onClick={openLoginModal} variant="default" size="default">
+    <Button onClick={openLoginModal} variant="default" size="default" className="cursor-pointer">
       로그인
     </Button>
   );

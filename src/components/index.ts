@@ -6,6 +6,7 @@ export { default as Header } from './Header';
 export { default as Input } from './Input';
 export { default as LoadingModal } from './LoadingModal';
 export { default as LoginModal } from './LoginModal';
+export { default as LogoutModal } from './LogoutModal';
 export { default as Modal } from './Modal';
 export { default as ProfileIcon } from './ProfileIcon';
 export { default as SearchBar } from './SearchBar';
