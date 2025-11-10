@@ -14,7 +14,7 @@ import {
 import { BookOpen } from 'lucide-react';
 import { useNavigate } from 'react-router';
 import type { HistorySummary } from '@/types/main.type';
-import { useHistoryAnalysisQuery } from '@/services/hooks/history';
+import { useAccuracyTrendQuery, useHistoryAnalysisQuery } from '@/services/hooks/history';
 import type { HistoryPeriod } from '@/types/history.type';
 
 export const HistoryPage = () => {
@@ -35,27 +35,13 @@ export const HistoryPage = () => {
   const [selectedYear, setSelectedYear] = useState<number>(2024);
 
   const { data: historyAnalysis } = useHistoryAnalysisQuery(period);
+  const { data: accuracyTrend } = useAccuracyTrendQuery(period);
 
   const handlePeriodChange = (value: HistoryPeriod) => {
     setPeriod(value);
   };
 
-  const mockChartData = [
-    { date: '10/22', accuracy: 65 },
-    { date: '10/23', accuracy: 72 },
-    { date: '10/24', accuracy: 68 },
-    { date: '10/25', accuracy: 78 },
-    { date: '10/26', accuracy: 82 },
-    { date: '10/27', accuracy: 75 },
-    { date: '10/28', accuracy: 85 },
-    { date: '10/29', accuracy: 79 },
-    { date: '10/30', accuracy: 88 },
-    { date: '10/31', accuracy: 83 },
-    { date: '11/01', accuracy: 90 },
-    { date: '11/02', accuracy: 86 },
-    { date: '11/03', accuracy: 92 },
-    { date: '11/04', accuracy: 89 },
-  ];
+  const chartData = accuracyTrend?.dataPoints.map((data) => ({ date: data.date, accuracy: data.averageScore })) || [];
 
   const mockHistorySummary: HistorySummary[] = [
     { id: 1, similarityScore: 85, userSummary: '오늘은 좋은 하루였다', createdAt: '2025-10-22' },
@@ -153,7 +139,7 @@ export const HistoryPage = () => {
         <div className="bg-white rounded-xl p-8 shadow-sm border border-app-gray-200 mb-12 w-full">
           <h2 className="text-app-gray-800 mb-6">정확도 추이</h2>
           <div className="h-80">
-            <LineChart data={mockChartData} />
+            <LineChart data={chartData} />
           </div>
         </div>
 
