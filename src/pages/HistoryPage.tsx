@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Button,
   Header,
@@ -21,6 +21,7 @@ import {
   useSummariesQuery,
 } from '@/services/hooks/history';
 import type { HistoryPeriod } from '@/types/history.type';
+import { useDebounce } from '@/hooks';
 
 export const HistoryPage = () => {
   const navigate = useNavigate();
@@ -39,6 +40,12 @@ export const HistoryPage = () => {
   const [isLatest, setIsLatest] = useState<boolean>(true);
   const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
 
+  const debouncedSearch = useDebounce(inputValue, 500);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [debouncedSearch]);
+
   const { data: historyAnalysis } = useHistoryAnalysisQuery(period);
   const { data: accuracyTrend } = useAccuracyTrendQuery(period);
   const { data: calendarYears } = useCalendarYearsQuery();
@@ -47,7 +54,7 @@ export const HistoryPage = () => {
     page: currentPage,
     limit: 5,
     isLatest,
-    search: inputValue || undefined,
+    search: debouncedSearch || undefined,
   });
 
   const handlePeriodChange = (value: HistoryPeriod) => {
@@ -123,7 +130,7 @@ export const HistoryPage = () => {
             </div>
 
             <SearchBar
-              placeholder="제목이나 배운점으로 검색..."
+              placeholder="원문 혹은 작성한 요약으로 검색"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
             />
