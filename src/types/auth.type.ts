@@ -1,3 +1,5 @@
+import type { ApiResponse } from './api.type';
+
 export interface User {
   id: number;
   kakao_id: number;
@@ -6,11 +8,4 @@ export interface User {
   profile_image?: string;
 }
 
-export interface AuthResponse {
-  success: boolean;
-  message?: string;
-  data?: {
-    user: User;
-  };
-}
-
+export interface AuthResponse extends ApiResponse<User> {}
