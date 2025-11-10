@@ -40,7 +40,7 @@ export const HistoryPage = () => {
   const [isLatest, setIsLatest] = useState<boolean>(true);
   const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
 
-  const debouncedSearch = useDebounce(inputValue, 500);
+  const debouncedSearch = useDebounce(inputValue, 300);
 
   useEffect(() => {
     setCurrentPage(1);
@@ -94,9 +94,9 @@ export const HistoryPage = () => {
 
         {/* 학습 통계 영역 */}
         <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
-          <StatisticCard type="weekCount" size="lg" value={historyAnalysis?.summaryCount.toString() || '0개'} />
-          <StatisticCard type="accuracy" size="lg" value={historyAnalysis?.averageScore.toString() || '0%'} />
-          <StatisticCard type="streak" size="lg" value={historyAnalysis?.consecutiveDays.toString() || '0일'} />
+          <StatisticCard type="weekCount" size="lg" value={`${historyAnalysis?.summaryCount ?? 0}개`} />
+          <StatisticCard type="accuracy" size="lg" value={`${historyAnalysis?.averageScore ?? 0}%`} />
+          <StatisticCard type="streak" size="lg" value={`${historyAnalysis?.consecutiveDays ?? 0}일`} />
         </div>
 
         <div className="bg-white rounded-xl p-8 shadow-sm border border-app-gray-200 mb-12 w-full">
