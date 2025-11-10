@@ -41,7 +41,7 @@ export const getSummaries = async (params?: SummariesQueryParams): Promise<Summa
       page: params?.page ?? 1,
       limit: params?.limit ?? 5,
       isLatest: params?.isLatest ?? true,
-      search: params?.search,
+      search: params?.search || undefined,
     },
   });
   return data.data;
