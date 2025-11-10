@@ -1,11 +1,11 @@
 export { default as AccuracyCircle } from './AccuracyCircle';
 export { default as AccuracyResult } from './AccuracyResult';
-export { default as AuthProfileButton } from './AuthProfileButton';
 export { default as Button } from './Button';
 export { default as FeedBackBox } from './FeedBackBox';
 export { default as Header } from './Header';
 export { default as Input } from './Input';
 export { default as LoadingModal } from './LoadingModal';
+export { default as LoginModal } from './LoginModal';
 export { default as Modal } from './Modal';
 export { default as ProfileIcon } from './ProfileIcon';
 export { default as SearchBar } from './SearchBar';

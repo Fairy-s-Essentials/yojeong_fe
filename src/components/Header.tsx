@@ -1,11 +1,19 @@
 import { useNavigate } from 'react-router';
 import { ArrowLeft, BookOpen } from 'lucide-react';
-import { AuthProfileButton, LoginButton } from '@/components';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/hooks/auth/useAuth';
+import { LoginButton, ProfileIcon } from '@/components';
 
 const Header = ({ isMainPage = false }: { isMainPage?: boolean }) => {
   const navigate = useNavigate();
-  const { isLoggedIn } = useAuth();
+  const { user, isLoggedIn, openLoginModal, openLogoutAlert } = useAuth();
+
+  const handleProfileClick = () => {
+    if (isLoggedIn) {
+      openLogoutAlert();
+    } else {
+      openLoginModal();
+    }
+  };
 
   const handleLogoButton = () => {
     navigate('/');
@@ -29,7 +37,7 @@ const Header = ({ isMainPage = false }: { isMainPage?: boolean }) => {
               요약의 정석
             </button>
             {/* 로그인/프로필 */}
-            {isLoggedIn ? <AuthProfileButton /> : <LoginButton />}
+            {isLoggedIn ? <ProfileIcon user={user} onClick={handleProfileClick} /> : <LoginButton />}
           </>
         ) : (
           <>
