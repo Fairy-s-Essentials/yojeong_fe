@@ -21,6 +21,7 @@ export { default as LineChart } from './LineChart';
 export { default as Heatmap } from './Heatmap';
 export { default as Pagination } from './Pagination';
 export { default as Toggle } from './Toggle';
+export { default as ProtectedRoute } from './ProtectedRoute';
 
 export * from './Dialog';
 export * from './AlertDialog';
