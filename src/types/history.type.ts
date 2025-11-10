@@ -71,3 +71,49 @@ export interface CalendarData {
 }
 
 export interface CalendarDataResponse extends ApiResponse<CalendarData> {}
+
+/**
+ * 요약 목록 쿼리 파라미터
+ */
+export interface SummariesQueryParams {
+  page?: number;
+  limit?: number;
+  isLatest?: boolean;
+  search?: string;
+}
+
+/**
+ * 요약 아이템 (미리보기)
+ * @id 요약 ID
+ * @userSummary 사용자 요약 (첫 100자)
+ * @similarityScore 유사도 점수
+ * @createdAt 생성 날짜
+ */
+export interface SummaryItem {
+  id: number;
+  userSummary: string;
+  similarityScore: number;
+  createdAt: string;
+}
+
+/**
+ * 페이지네이션 정보
+ */
+export interface Pagination {
+  currentPage: number;
+  totalPages: number;
+  totalItems: number;
+  itemsPerPage: number;
+  hasNext: boolean;
+  hasPrev: boolean;
+}
+
+/**
+ * 요약 목록 응답 데이터
+ */
+export interface SummariesData {
+  items: SummaryItem[];
+  pagination: Pagination;
+}
+
+export interface SummariesResponse extends ApiResponse<SummariesData> {}

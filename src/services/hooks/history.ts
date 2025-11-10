@@ -1,6 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
-import { getAccuracyTrend, getCalendarData, getCalendarYears, getHistoryAnalysis } from '../api/history.api';
-import type { HistoryPeriod } from '@/types/history.type';
+import {
+  getAccuracyTrend,
+  getCalendarData,
+  getCalendarYears,
+  getHistoryAnalysis,
+  getSummaries,
+} from '../api/history.api';
+import type { HistoryPeriod, SummariesQueryParams } from '@/types/history.type';
 
 export const useHistoryAnalysisQuery = (period: HistoryPeriod = 7) => {
   return useQuery({
@@ -27,5 +33,12 @@ export const useCalendarDataQuery = (year: number = new Date().getFullYear()) =>
   return useQuery({
     queryKey: ['calendarData', year],
     queryFn: () => getCalendarData(year),
+  });
+};
+
+export const useSummariesQuery = (params?: SummariesQueryParams) => {
+  return useQuery({
+    queryKey: ['summaries', params],
+    queryFn: () => getSummaries(params),
   });
 };
