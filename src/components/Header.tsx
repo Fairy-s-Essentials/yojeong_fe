@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router';
 import { ArrowLeft, BookOpen } from 'lucide-react';
 import { AuthProfileButton, LoginButton } from '@/components';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/hooks/auth/useAuth';
 
 const Header = ({ isMainPage = false }: { isMainPage?: boolean }) => {
   const navigate = useNavigate();

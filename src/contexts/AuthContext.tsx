@@ -1,6 +1,7 @@
-import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
+/* eslint-disable react-refresh/only-export-components */
+import { createContext, useState, useEffect, type ReactNode } from 'react';
 import { checkAuth } from '@/services/api/auth.api';
-import type { User } from '@/types/auth';
+import type { User } from '@/types/auth.type';
 
 interface AuthContextValue {
   user: User | null;
@@ -9,15 +10,7 @@ interface AuthContextValue {
   refetch: () => Promise<void>;
 }
 
-const AuthContext = createContext<AuthContextValue | null>(null);
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within AuthProvider');
-  }
-  return context;
-};
+export const AuthContext = createContext<AuthContextValue | null>(null);
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -29,13 +22,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const loadUser = async () => {
     try {
-      const response = await checkAuth();      
+      const response = await checkAuth();
       if (response.success && response.data?.user) {
         setUser(response.data.user);
       } else {
         setUser(null);
       }
-    } catch (error: unknown) {
+    } catch {
       setUser(null);
     } finally {
       setIsLoading(false);
@@ -55,4 +48,3 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
-

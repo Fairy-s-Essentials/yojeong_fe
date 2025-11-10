@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from './useAuth';
 import { startKakaoLogin, logout } from '@/services/api/auth.api';
 
 export const useProfileAuth = () => {
@@ -25,7 +25,7 @@ export const useProfileAuth = () => {
       await refetch();
       setIsLogoutAlertOpen(false);
       alert('로그아웃되었습니다.');
-    } catch (error) {
+    } catch {
       alert('로그아웃에 실패했습니다.');
     }
   };
@@ -42,4 +42,3 @@ export const useProfileAuth = () => {
     handleLogout,
   };
 };
-
