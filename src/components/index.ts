@@ -27,3 +27,4 @@ export * from './Dialog';
 export * from './AlertDialog';
 export * from './LoadingModal';
 export * from './Modal';
+export * from './OriginalTextModal';

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { LEARNING_LENGTH_LIMITS } from '@/constants';
-import { Header, AccuracyResult, Button, SummaryBox, FeedBackBox, TextArea } from '@/components';
+import { Header, AccuracyResult, Button, SummaryBox, FeedBackBox, TextArea, OriginalTextModal } from '@/components';
 import { useGetDetailSummary, useSaveLearningNote } from '@/services/hooks/summary';
 import { useLoading } from '@/contexts';
 
@@ -19,6 +19,7 @@ export const AnalysisPage = () => {
   const [learningNote, setLearningNote] = useState<string>('');
   const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle');
   const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const [isOriginalModalOpen, setIsOriginalModalOpen] = useState(false);
   const isLearningNoteOverLimit = learningNote.length > LEARNING_LENGTH_LIMITS;
 
   const handleSaveLearningNote = useCallback(() => {
@@ -104,7 +105,31 @@ export const AnalysisPage = () => {
 
         {/* 요약 비교 영역 */}
         <div className="mb-12">
-          <h2 className="text-lg text-app-gray-800 mb-6">📝 요약 비교</h2>
+          <div className="flex justify-between items-center">
+            <h2 className="text-lg text-app-gray-800 mb-6">📝 요약 비교</h2>
+            <button
+              onClick={() => setIsOriginalModalOpen(true)}
+              className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg bg-white hover:bg-gray-50 cursor-pointer transition-colors"
+            >
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                <polyline points="14 2 14 8 20 8" />
+                <line x1="16" y1="13" x2="8" y2="13" />
+                <line x1="16" y1="17" x2="8" y2="17" />
+                <polyline points="10 9 9 9 8 9" />
+              </svg>
+              <span className="text-sm font-medium">원문보기</span>
+            </button>
+          </div>
           <div className="grid md:grid-cols-2 gap-6">
             <div>
               <h3 className="text-app-gray-800 mb-3">✍️ 당신의 요약</h3>
@@ -167,6 +192,14 @@ export const AnalysisPage = () => {
           </Button>
         </div>
       </main>
+
+      {/* 원문보기 모달 */}
+      <OriginalTextModal
+        isOpen={isOriginalModalOpen}
+        onClose={() => setIsOriginalModalOpen(false)}
+        originalText={detailSummary?.originalText || ''}
+        originalUrl={detailSummary?.originalUrl ?? undefined}
+      />
     </div>
   );
 };
