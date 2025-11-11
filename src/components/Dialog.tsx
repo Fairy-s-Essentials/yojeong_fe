@@ -90,8 +90,22 @@ function DialogClose({ onClick, ...props }: React.ButtonHTMLAttributes<HTMLButto
 const DialogOverlay = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => {
     const { open } = useDialogContext();
+    const [shouldRender, setShouldRender] = React.useState(open);
 
-    if (!open) return null;
+    // Handle animation timing
+    React.useEffect(() => {
+      if (open) {
+        setShouldRender(true);
+      } else {
+        // Wait for animation to finish before unmounting
+        const timer = setTimeout(() => {
+          setShouldRender(false);
+        }, 200);
+        return () => clearTimeout(timer);
+      }
+    }, [open]);
+
+    if (!shouldRender) return null;
 
     return (
       <div
@@ -99,7 +113,8 @@ const DialogOverlay = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTML
         data-slot="dialog-overlay"
         data-state={open ? 'open' : 'closed'}
         className={cn(
-          'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/50',
+          'fixed inset-0 z-50 bg-black/50',
+          open ? 'dialog-overlay-open' : 'dialog-overlay-closed',
           className,
         )}
         {...props}
@@ -112,6 +127,20 @@ DialogOverlay.displayName = 'DialogOverlay';
 const DialogContent = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, children, ...props }, ref) => {
     const { open, onOpenChange } = useDialogContext();
+    const [shouldRender, setShouldRender] = React.useState(open);
+
+    // Handle animation timing
+    React.useEffect(() => {
+      if (open) {
+        setShouldRender(true);
+      } else {
+        // Wait for animation to finish before unmounting
+        const timer = setTimeout(() => {
+          setShouldRender(false);
+        }, 200); // Match duration-200 in className
+        return () => clearTimeout(timer);
+      }
+    }, [open]);
 
     // Close on Escape key
     React.useEffect(() => {
@@ -123,17 +152,21 @@ const DialogContent = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTML
 
       if (open) {
         document.addEventListener('keydown', handleKeyDown);
-        // Prevent body scroll when dialog is open
+
+        // Prevent body scroll when dialog is open without layout shift
+        const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
         document.body.style.overflow = 'hidden';
+        document.body.style.paddingRight = `${scrollbarWidth}px`;
       }
 
       return () => {
         document.removeEventListener('keydown', handleKeyDown);
         document.body.style.overflow = '';
+        document.body.style.paddingRight = '';
       };
     }, [open, onOpenChange]);
 
-    if (!open) return null;
+    if (!shouldRender) return null;
 
     const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
       if (e.target === e.currentTarget) {
@@ -151,7 +184,8 @@ const DialogContent = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTML
           data-slot="dialog-content"
           data-state={open ? 'open' : 'closed'}
           className={cn(
-            'bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-lg border p-6 shadow-lg duration-200 sm:max-w-lg',
+            'bg-background fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-lg border p-6 shadow-lg sm:max-w-lg',
+            open ? 'dialog-content-open' : 'dialog-content-closed',
             className,
           )}
           {...props}
