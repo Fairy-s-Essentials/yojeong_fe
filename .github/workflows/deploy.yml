@@ -40,6 +40,6 @@ jobs:
             yarn install --frozen-lockfile
 
             echo "=== Frontend: yarn build ==="
-            CI=false yarn build
+            yarn tsc --noEmitOnError false && yarn vite build
 
             echo "=== Frontend Deployment Completed ==="
