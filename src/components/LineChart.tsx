@@ -9,13 +9,13 @@ import {
 } from 'recharts';
 
 interface LineChartProps {
-  data: { date: string; accuracy: number }[];
+  chartData: { date: string; accuracy: number }[];
 }
 
-const LineChart = ({ data }: LineChartProps) => {
+const LineChart = ({ chartData }: LineChartProps) => {
   return (
     <ResponsiveContainer width="100%" height="100%">
-      <RechartsLineChart data={data}>
+      <RechartsLineChart data={chartData}>
         <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
         <XAxis dataKey="date" stroke="#6b7280" style={{ fontSize: '12px' }} />
         <YAxis
