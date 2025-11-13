@@ -1,0 +1,36 @@
+name: Deploy Frontend to EC2 (PR merged into main)
+
+on:
+  pull_request:
+    branches: [main]
+    types: [closed]
+
+jobs:
+  deploy:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            set -e
+
+            echo "=== Frontend: cd project ==="
+            cd ${{ secrets.EC2_FRONTEND_PATH }}
+
+            echo "=== Frontend: git pull ==="
+            git pull origin main
+
+            echo "=== Frontend: yarn install ==="
+            yarn install --frozen-lockfile
+
+            echo "=== Frontend: yarn build ==="
+            CI=false yarn build
+
+            echo "=== Frontend Deployment Completed ==="
