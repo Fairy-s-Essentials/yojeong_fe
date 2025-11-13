@@ -11,7 +11,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-
       - name: Deploy to EC2
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -20,6 +19,16 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             set -e
+
+            # Load NVM (required for yarn)
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
+            echo "Node:"
+            node -v
+
+            echo "Yarn:"
+            yarn -v
 
             echo "=== Frontend: cd project ==="
             cd ${{ secrets.EC2_FRONTEND_PATH }}
