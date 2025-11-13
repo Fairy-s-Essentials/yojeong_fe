@@ -22,6 +22,7 @@ import {
 } from '@/services/hooks/history';
 import type { HistoryPeriod } from '@/types/history.type';
 import { useDebounce } from '@/hooks';
+import { formatChartDate } from '@/utils/formatChartDate';
 
 export const HistoryPage = () => {
   const navigate = useNavigate();
@@ -61,7 +62,11 @@ export const HistoryPage = () => {
     setPeriod(value);
   };
 
-  const chartData = accuracyTrend?.dataPoints.map((data) => ({ date: data.date, accuracy: data.averageScore })) || [];
+  const chartData =
+    accuracyTrend?.dataPoints.map((data) => ({
+      date: formatChartDate(data.date, period),
+      accuracy: data.averageScore,
+    })) || [];
 
   const handleYearChange = (year: number) => {
     setSelectedYear(year);
@@ -102,7 +107,7 @@ export const HistoryPage = () => {
         <div className="bg-white rounded-xl p-8 shadow-sm border border-app-gray-200 mb-12 w-full">
           <h2 className="text-app-gray-800 mb-6">정확도 추이</h2>
           <div className="h-80">
-            <LineChart data={chartData} />
+            <LineChart chartData={chartData} />
           </div>
         </div>
 
