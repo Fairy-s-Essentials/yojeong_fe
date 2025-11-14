@@ -44,7 +44,8 @@ export const useCalendarData = (selectedYear: number) => {
 
   return {
     years: yearsData.years,
-    heatmapData,
+    learningDays: calendarData.learningDays, // 원본 데이터 (Heatmap 컴포넌트용)
+    heatmapData, // 가공된 데이터 (필요시 사용)
     stats,
   };
 };

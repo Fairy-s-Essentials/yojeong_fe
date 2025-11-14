@@ -107,7 +107,7 @@ const HistoryContent = ({
 
   // Application Layer Hooks - 모든 쿼리가 병렬로 실행됨
   const { stats, chartData, trendAnalysis } = useHistoryStatsData(period);
-  const { years, heatmapData } = useCalendarData(selectedYear);
+  const { years, learningDays } = useCalendarData(selectedYear);
   const { items, pagination, isEmpty } = useSummaryListData({
     page: currentPage,
     limit: 5,
@@ -141,11 +141,11 @@ const HistoryContent = ({
       </div>
 
       {/* 학습 일정 */}
-      <div className="bg-white rounded-xl p-8 shadow-sm border border-app-gray-200 mb-12 w-full">
+      <div className="bg-white rounded-xl p-8 shadow-sm border border-app-gray-200 mb-12 w-full overflow-hidden">
         <h2 className="text-app-gray-800 mb-6">학습 일정</h2>
         <Heatmap
           years={years}
-          yearlyLearningData={{ year: selectedYear, learningDays: heatmapData }}
+          yearlyLearningData={{ year: selectedYear, learningDays }}
           selectedYear={selectedYear}
           onYearChange={onYearChange}
         />
