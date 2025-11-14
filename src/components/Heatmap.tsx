@@ -45,40 +45,51 @@ const Heatmap = ({ years, yearlyLearningData, selectedYear, onYearChange }: Heat
     onYearChange(year);
   };
 
+  // 1월 1일의 요일 (0: 일요일, 1: 월요일, ...)
+  const firstDayOfYear = new Date(selectedYear, 0, 1).getDay();
+
+  // 총 셀 개수 = 앞 빈칸 + 실제 날짜 + 뒤 빈칸
+  const totalCells = firstDayOfYear + heatmapData.length;
+  const totalWeeks = Math.ceil(totalCells / 7);
+
   return (
     <div className="flex gap-6">
       {/* Left side: Heatmap */}
-      <div className="flex-1">
-        <div className="overflow-x-auto">
-          <div className="inline-flex gap-1">
-            {Array.from({ length: 53 }, (_, weekIdx) => (
-              <div key={weekIdx} className="flex flex-col gap-1">
-                {Array.from({ length: 7 }, (_, dayIdx) => {
-                  const idx = weekIdx * 7 + dayIdx;
-                  if (idx >= heatmapData.length) return null;
-                  const dayData = heatmapData[idx];
-                  const date = new Date(selectedYear, 0, 1);
-                  date.setDate(date.getDate() + idx);
+      <div className="flex-1 overflow-x-auto">
+        <div className="inline-flex gap-1 min-w-min">
+          {Array.from({ length: totalWeeks }, (_, weekIdx) => (
+            <div key={weekIdx} className="flex flex-col gap-1">
+              {Array.from({ length: 7 }, (_, dayIdx) => {
+                const cellIndex = weekIdx * 7 + dayIdx;
+                const dataIndex = cellIndex - firstDayOfYear;
 
-                  const tooltipText =
-                    dayData.count && dayData.count > 0
-                      ? `${date.toLocaleDateString('ko-KR')}\n학습 횟수: ${dayData.count}개\n평균 점수: ${Math.round(dayData.averageScore)}%`
-                      : `${date.toLocaleDateString('ko-KR')}\n학습 기록 없음`;
+                // 앞 빈칸 또는 뒤 빈칸
+                if (dataIndex < 0 || dataIndex >= heatmapData.length) {
+                  return <div key={dayIdx} className="w-3 h-3 rounded-sm bg-transparent" />;
+                }
 
-                  return (
-                    <div
-                      key={dayIdx}
-                      className={cn(
-                        'w-3 h-3 rounded-sm cursor-pointer hover:ring-2 hover:ring-app-blue transition-all',
-                        getHeatmapColor(dayData.level),
-                      )}
-                      title={tooltipText}
-                    />
-                  );
-                })}
-              </div>
-            ))}
-          </div>
+                const dayData = heatmapData[dataIndex];
+                const date = new Date(selectedYear, 0, 1);
+                date.setDate(date.getDate() + dataIndex);
+
+                const tooltipText =
+                  dayData.count && dayData.count > 0
+                    ? `${date.toLocaleDateString('ko-KR')}\n학습 횟수: ${dayData.count}개\n평균 점수: ${Math.round(dayData.averageScore)}%`
+                    : `${date.toLocaleDateString('ko-KR')}\n학습 기록 없음`;
+
+                return (
+                  <div
+                    key={dayIdx}
+                    className={cn(
+                      'w-3 h-3 rounded-sm cursor-pointer hover:ring-2 hover:ring-app-blue transition-all',
+                      getHeatmapColor(dayData.level),
+                    )}
+                    title={tooltipText}
+                  />
+                );
+              })}
+            </div>
+          ))}
         </div>
         <div className="flex items-center justify-between mt-4">
           <span className="text-xs text-app-gray-500">{selectedYear}년</span>
