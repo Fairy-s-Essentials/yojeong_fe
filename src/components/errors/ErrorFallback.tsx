@@ -1,6 +1,6 @@
 import { AlertCircle, RefreshCw, Home, WifiOff, Lock } from 'lucide-react';
 import { useNavigate } from 'react-router';
-import { Button } from '@/components/Button';
+import { Button } from '@/components';
 import { ErrorType } from '@/utils/errorHandling';
 import type { ErrorFallbackProps } from '@/components/boundaries';
 
