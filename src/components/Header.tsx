@@ -5,7 +5,7 @@ import { LoginButton, ProfileIcon } from '@/components';
 
 const Header = ({ isMainPage = false }: { isMainPage?: boolean }) => {
   const navigate = useNavigate();
-  const { user, isLoggedIn, openLoginModal, openLogoutAlert } = useAuth();
+  const { user, isLoggedIn, isLoading, openLoginModal, openLogoutAlert } = useAuth();
 
   const handleProfileClick = () => {
     if (isLoggedIn) {
@@ -37,7 +37,13 @@ const Header = ({ isMainPage = false }: { isMainPage?: boolean }) => {
               요약의 정석
             </button>
             {/* 로그인/프로필 */}
-            {isLoggedIn ? <ProfileIcon user={user} onClick={handleProfileClick} /> : <LoginButton />}
+            {isLoading ? (
+              <div className="w-10 h-10 rounded-full bg-app-gray-200 animate-pulse" />
+            ) : isLoggedIn ? (
+              <ProfileIcon user={user} onClick={handleProfileClick} />
+            ) : (
+              <LoginButton />
+            )}
           </>
         ) : (
           <>
