@@ -24,9 +24,9 @@ export const MainPage = () => {
     navigate('/history');
   };
 
-  const { data: mainAnalysis } = useMainAnalysisQuery();
-  const { data: mainRecentSummary } = useMainRecentSummaryQuery();
-  console.log(mainRecentSummary);
+  // 로그인 상태에 따라 데이터 조회 (로그인 안 한 경우 쿼리 실행 안 함)
+  const { data: mainAnalysis } = useMainAnalysisQuery(isLoggedIn);
+  const { data: mainRecentSummary } = useMainRecentSummaryQuery(isLoggedIn);
 
   return (
     <div className="min-h-screen">
