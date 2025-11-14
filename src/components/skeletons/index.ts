@@ -4,3 +4,4 @@ export { SkeletonLineChart } from './SkeletonLineChart';
 export { SkeletonHeatmap } from './SkeletonHeatmap';
 export { SkeletonSummaryList } from './SkeletonSummaryList';
 export { SkeletonHistoryPage } from './SkeletonHistoryPage';
+export { SkeletonAnalysisPage } from './SkeletonAnalysisPage';

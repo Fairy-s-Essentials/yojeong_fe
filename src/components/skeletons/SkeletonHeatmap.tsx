@@ -2,13 +2,12 @@ import { Skeleton } from './SkeletonBase';
 
 /**
  * 히트맵 스켈레톤
+ * - 제목은 고정, 히트맵 데이터만 스켈레톤
  */
 export const SkeletonHeatmap = () => {
   return (
     <div className="bg-white rounded-xl p-8 shadow-sm border border-app-gray-200 mb-12 w-full overflow-hidden">
-      <h2 className="text-app-gray-800 mb-6">
-        <Skeleton height={24} width={120} />
-      </h2>
+      <h2 className="text-app-gray-800 mb-6">학습 일정</h2>
 
       <div className="flex gap-6">
         {/* 히트맵 영역 */}
