@@ -60,7 +60,10 @@ const MainContent = () => {
       <div className="w-full flex flex-col">
         <div className="flex items-center justify-between mb-6">
           <h2>최근 기록</h2>
-          <button onClick={() => navigate('/history')} className="text-app-blue hover:text-app-blue-dark cursor-pointer">
+          <button
+            onClick={() => navigate('/history')}
+            className="text-app-blue hover:text-app-blue-dark cursor-pointer"
+          >
             전체 보기 →
           </button>
         </div>
@@ -92,7 +95,6 @@ const MainContent = () => {
 
 // 비로그인 사용자 콘텐츠
 const MainEmpty = () => {
-  const navigate = useNavigate();
   const { openLoginModal } = useAuth();
 
   const handleWriteButton = () => {
