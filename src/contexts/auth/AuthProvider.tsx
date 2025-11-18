@@ -1,6 +1,6 @@
 import { useState, useEffect, type ReactNode } from 'react';
 import { checkAuth, logout } from '@/services/api/auth.api';
-import type { User } from '@/types/auth';
+import type { User } from '@/types/auth.type';
 import { LoginModal, LogoutModal } from '@/components';
 import { AuthContext, type AuthContextValue } from './AuthContext';
 
