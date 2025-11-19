@@ -6,6 +6,7 @@ import { AsyncBoundary } from '@/components/boundaries';
 import { ErrorFallback } from '@/components/errors';
 import { SkeletonAnalysisPage } from '@/components/skeletons';
 import { useGetDetailSummary, useSaveLearningNote } from '@/services/hooks/summary';
+import { useLoading } from '@/contexts';
 
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
 
@@ -30,6 +31,7 @@ interface AnalysisContentProps {
 
 const AnalysisContent = ({ summaryId }: AnalysisContentProps) => {
   const navigate = useNavigate();
+  const { hideLoading } = useLoading();
 
   // useSuspenseQuery - data는 항상 정의됨
   const { data: detailSummary } = useGetDetailSummary(summaryId);
@@ -40,6 +42,12 @@ const AnalysisContent = ({ summaryId }: AnalysisContentProps) => {
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [isOriginalModalOpen, setIsOriginalModalOpen] = useState(false);
   const isLearningNoteOverLimit = learningNote.length > LEARNING_LENGTH_LIMITS;
+
+  // 데이터 로드 완료 시 로딩 모달 숨기기 (컴포넌트 마운트 = Suspense 해결 = 데이터 로드 완료)
+  useEffect(() => {
+    hideLoading();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // 마운트 시 한 번만 실행
 
   const handleSaveLearningNote = useCallback(() => {
     saveLearningNote(
