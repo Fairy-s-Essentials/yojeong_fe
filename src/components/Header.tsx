@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router';
-import { ArrowLeft, BookOpen } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
+import logo from '@/assets/logo/yojeng.webp';
 import { useAuth } from '@/hooks/auth/useAuth';
 import { LoginButton, ProfileIcon } from '@/components';
 
@@ -31,9 +32,9 @@ const Header = ({ isMainPage = false }: { isMainPage?: boolean }) => {
             {/* 로고 */}
             <button
               onClick={handleLogoButton}
-              className="flex items-center gap-2 text-app-gray-800 hover:text-app-blue transition-colors cursor-pointer"
+              className="flex items-center gap-1 text-app-gray-800 hover:text-app-blue transition-colors cursor-pointer"
             >
-              <BookOpen className="w-6 h-6 text-app-blue" />
+              <img src={logo} alt="요약의 정석" className="w-10 h-10" />
               요약의 정석
             </button>
             {/* 로그인/프로필 */}
