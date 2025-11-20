@@ -11,16 +11,16 @@ export const useSaveSummary = () => {
   return useMutation({
     mutationFn: ({ data, signal }: { data: SaveSummaryProps; signal?: AbortSignal }) => saveSummary(data, signal),
     onSuccess: () => {
-      // 메인 페이지 데이터 invalidate
-      queryClient.invalidateQueries({ queryKey: ['mainAnalysis'] });
-      queryClient.invalidateQueries({ queryKey: ['mainRecentSummary'] });
-
-      // 히스토리 페이지 데이터 invalidate
-      queryClient.invalidateQueries({ queryKey: ['historyAnalysis'] });
-      queryClient.invalidateQueries({ queryKey: ['accuracyTrend'] });
-      queryClient.invalidateQueries({ queryKey: ['calendarYears'] });
-      queryClient.invalidateQueries({ queryKey: ['calendarData'] });
-      queryClient.invalidateQueries({ queryKey: ['summaries'] });
+      // 메인 페이지 및 히스토리 페이지 쿼리 무효화
+      [
+        ['mainAnalysis'],
+        ['mainRecentSummary'],
+        ['historyAnalysis'],
+        ['accuracyTrend'],
+        ['calendarYears'],
+        ['calendarData'],
+        ['summaries'],
+      ].forEach((queryKey) => queryClient.invalidateQueries({ queryKey }));
     },
   });
 };
