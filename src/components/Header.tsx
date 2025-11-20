@@ -1,8 +1,8 @@
 import { useNavigate } from 'react-router';
 import { ArrowLeft } from 'lucide-react';
+import logo from '@/assets/logo/yojeng.webp';
 import { useAuth } from '@/hooks/auth/useAuth';
 import { LoginButton, ProfileIcon } from '@/components';
-import logo from '@/assets/logo/yojeng.webp';
 
 const Header = ({ isMainPage = false }: { isMainPage?: boolean }) => {
   const navigate = useNavigate();
@@ -34,7 +34,7 @@ const Header = ({ isMainPage = false }: { isMainPage?: boolean }) => {
               onClick={handleLogoButton}
               className="flex items-center gap-1 text-app-gray-800 hover:text-app-blue transition-colors cursor-pointer"
             >
-              <img src={logo} alt="요약의 정석 로고" className="w-10 h-10" />
+              <img src={logo} alt="요약의 정석" className="w-10 h-10" />
               요약의 정석
             </button>
             {/* 로그인/프로필 */}

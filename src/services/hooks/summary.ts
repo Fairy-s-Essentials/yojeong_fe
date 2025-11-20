@@ -44,7 +44,6 @@ export const useSaveLearningNote = () => {
   return useMutation({
     mutationFn: ({ id, learningNote }: { id: number; learningNote: string }) => saveLearningNote(id, learningNote),
     onSuccess: (_, variables) => {
-      // 해당 요약 상세 정보 invalidate
       queryClient.invalidateQueries({ queryKey: ['detailSummary', variables.id] });
     },
   });
