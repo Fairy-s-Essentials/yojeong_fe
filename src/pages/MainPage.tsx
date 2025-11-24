@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router';
 import { BookOpen } from 'lucide-react';
-import { Header, Button, StatisticCard, SummaryItem } from '@/components';
+import { Button, StatisticCard, SummaryItem } from '@/components';
 import { AsyncBoundary } from '@/components/boundaries';
 import { ErrorFallback } from '@/components/errors';
 import { SkeletonMainPage } from '@/components/skeletons';
@@ -11,21 +11,17 @@ export const MainPage = () => {
   const { isLoggedIn, isLoading } = useAuth();
 
   return (
-    <div className="min-h-screen">
-      <Header isMainPage />
+    <>
       {/* 인증 확인 완료 전까지는 아무것도 표시 안 함 */}
-      {!isLoading && (
-        <main>
-          {isLoggedIn ? (
-            <AsyncBoundary loadingFallback={<SkeletonMainPage />} errorFallback={ErrorFallback}>
-              <MainContent />
-            </AsyncBoundary>
-          ) : (
-            <MainEmpty />
-          )}
-        </main>
-      )}
-    </div>
+      {!isLoading &&
+        (isLoggedIn ? (
+          <AsyncBoundary loadingFallback={<SkeletonMainPage />} errorFallback={ErrorFallback}>
+            <MainContent />
+          </AsyncBoundary>
+        ) : (
+          <MainEmpty />
+        ))}
+    </>
   );
 };
 

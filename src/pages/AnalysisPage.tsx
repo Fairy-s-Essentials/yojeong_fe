@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { LEARNING_LENGTH_LIMITS } from '@/constants';
-import { Header, AccuracyResult, Button, SummaryBox, FeedBackBox, TextArea, OriginalTextModal } from '@/components';
+import { AccuracyResult, Button, SummaryBox, FeedBackBox, TextArea, OriginalTextModal } from '@/components';
 import { AsyncBoundary } from '@/components/boundaries';
 import { ErrorFallback } from '@/components/errors';
 import { SkeletonAnalysisPage } from '@/components/skeletons';
@@ -14,14 +14,9 @@ export const AnalysisPage = () => {
   const { id } = useParams<{ id: string }>();
 
   return (
-    <div className="min-h-screen">
-      <Header />
-      <main>
-        <AsyncBoundary loadingFallback={<SkeletonAnalysisPage />} errorFallback={ErrorFallback} resetKeys={[id]}>
-          <AnalysisContent summaryId={parseInt(id!)} />
-        </AsyncBoundary>
-      </main>
-    </div>
+    <AsyncBoundary loadingFallback={<SkeletonAnalysisPage />} errorFallback={ErrorFallback} resetKeys={[id]}>
+      <AnalysisContent summaryId={parseInt(id!)} />
+    </AsyncBoundary>
   );
 };
 

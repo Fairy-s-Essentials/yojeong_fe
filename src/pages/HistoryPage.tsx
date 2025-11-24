@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import {
   Button,
-  Header,
   SearchBar,
   SelectBox,
   StatisticCard,
@@ -40,35 +39,31 @@ export const HistoryPage = () => {
   ];
 
   return (
-    <div className="min-h-screen">
-      <Header />
+    <div className="flex flex-col items-center max-w-6xl mx-auto px-6 py-10">
+      {/* 드롭다운 영역 */}
+      <div className="w-full flex justify-end mb-6">
+        <SelectBox value={period} onChange={setPeriod} options={dateOptions} />
+      </div>
 
-      <main className="flex flex-col items-center max-w-6xl mx-auto px-6 py-10">
-        {/* 드롭다운 영역 */}
-        <div className="w-full flex justify-end mb-6">
-          <SelectBox value={period} onChange={setPeriod} options={dateOptions} />
-        </div>
-
-        {/* 전체 컨텐츠를 하나의 AsyncBoundary로 감싸서 워터폴 방지 */}
-        <AsyncBoundary
-          loadingFallback={<SkeletonHistoryPage />}
-          errorFallback={ErrorFallback}
-          resetKeys={[period, selectedYear, currentPage, isLatest, debouncedSearch]}
-        >
-          <HistoryContent
-            period={period}
-            selectedYear={selectedYear}
-            currentPage={currentPage}
-            isLatest={isLatest}
-            debouncedSearch={debouncedSearch}
-            onYearChange={setSelectedYear}
-            onPageChange={setCurrentPage}
-            onSortChange={setIsLatest}
-            onInputChange={setInputValue}
-            inputValue={inputValue}
-          />
-        </AsyncBoundary>
-      </main>
+      {/* 전체 컨텐츠를 하나의 AsyncBoundary로 감싸서 워터폴 방지 */}
+      <AsyncBoundary
+        loadingFallback={<SkeletonHistoryPage />}
+        errorFallback={ErrorFallback}
+        resetKeys={[period, selectedYear, currentPage, isLatest, debouncedSearch]}
+      >
+        <HistoryContent
+          period={period}
+          selectedYear={selectedYear}
+          currentPage={currentPage}
+          isLatest={isLatest}
+          debouncedSearch={debouncedSearch}
+          onYearChange={setSelectedYear}
+          onPageChange={setCurrentPage}
+          onSortChange={setIsLatest}
+          onInputChange={setInputValue}
+          inputValue={inputValue}
+        />
+      </AsyncBoundary>
     </div>
   );
 };
