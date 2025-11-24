@@ -6,9 +6,12 @@ import { ErrorFallback } from '@/components/errors';
 import { SkeletonMainPage } from '@/components/skeletons';
 import { useMainAnalysisQuery, useMainRecentSummaryQuery } from '@/services/hooks/main';
 import { useAuth } from '@/hooks/auth/useAuth';
+import { useUsageLimit } from '@/services/hooks/usage';
+import { ALERT_MESSAGE } from '@/constants/alertMessage';
 
 export const MainPage = () => {
   const { isLoggedIn, isLoading } = useAuth();
+  const { isLimited } = useUsageLimit();
 
   return (
     <>
@@ -16,7 +19,7 @@ export const MainPage = () => {
       {!isLoading &&
         (isLoggedIn ? (
           <AsyncBoundary loadingFallback={<SkeletonMainPage />} errorFallback={ErrorFallback}>
-            <MainContent />
+            <MainContent isLimited={isLimited} />
           </AsyncBoundary>
         ) : (
           <MainEmpty />
@@ -26,7 +29,7 @@ export const MainPage = () => {
 };
 
 // 로그인한 사용자 콘텐츠
-const MainContent = () => {
+const MainContent = ({ isLimited }: { isLimited: boolean }) => {
   const navigate = useNavigate();
   const { data: mainAnalysis } = useMainAnalysisQuery();
   const { data: mainRecentSummary } = useMainRecentSummaryQuery();
@@ -39,10 +42,16 @@ const MainContent = () => {
         <p className="text-app-gray-500 mb-8">AI보다 먼저 읽고, 더 깊게 이해하세요</p>
         <Button
           onClick={() => navigate('/input')}
-          className="px-4 py-6 bg-app-blue hover:bg-app-blue-dark text-white rounded-lg shadow-lg hover:shadow-xl transition-all cursor-pointer"
+          disabled={isLimited}
+          className={`px-4 py-6 rounded-lg shadow-lg transition-all ${
+            isLimited
+              ? 'bg-app-gray-300 text-app-gray-500 cursor-not-allowed'
+              : 'bg-app-blue hover:bg-app-blue-dark text-white hover:shadow-xl cursor-pointer'
+          }`}
         >
           <BookOpen className="w-5 h-5 mr-2" />새 글 읽기
         </Button>
+        {isLimited && <p className="text-red-500 text-sm mt-3 font-medium">{ALERT_MESSAGE.USAGE_LIMIT}</p>}
       </div>
 
       {/* 학습 통계 영역 - useSuspenseQuery로 data 항상 정의됨 */}
@@ -77,11 +86,17 @@ const MainContent = () => {
             <p className="text-app-gray-500 mb-4">아직 읽은 글이 없습니다</p>
             <Button
               onClick={() => navigate('/input')}
+              disabled={isLimited}
               variant="outline"
-              className="border-app-blue text-app-blue hover:bg-app-blue-light cursor-pointer"
+              className={`${
+                isLimited
+                  ? 'border-app-gray-300 text-app-gray-400 cursor-not-allowed'
+                  : 'border-app-blue text-app-blue hover:bg-app-blue-light cursor-pointer'
+              }`}
             >
               첫 글 시작하기
             </Button>
+            {isLimited && <p className="text-red-500 text-sm mt-3 font-medium">{ALERT_MESSAGE.USAGE_LIMIT}</p>}
           </div>
         )}
       </div>

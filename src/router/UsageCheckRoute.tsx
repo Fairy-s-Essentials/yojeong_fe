@@ -1,13 +1,13 @@
+import { Outlet } from 'react-router';
 import { useEffect } from 'react';
-import { Outlet, useNavigate } from 'react-router';
+import { useNavigate } from 'react-router';
 import { ALERT_MESSAGE } from '@/constants/alertMessage';
+import { useUsageLimit } from '@/services/hooks/usage';
 
 export const UsageCheckRoute = () => {
+  console.log('UsageLimitCheck!');
   const navigate = useNavigate();
-
-  // TODO: 실제 API로 교체
-  const isLimited = true;
-  const isLoading = false;
+  const { error, isLoading, isLimited } = useUsageLimit();
 
   useEffect(() => {
     if (!isLoading && isLimited) {
@@ -16,6 +16,10 @@ export const UsageCheckRoute = () => {
     }
   }, [isLimited, isLoading, navigate]);
 
+  // 에러 발생 시 로그만 출력하고 계속 진행
+  if (error) {
+    console.error('사용량 조회 실패:', error);
+  }
   if (isLoading) {
     return null;
   }
