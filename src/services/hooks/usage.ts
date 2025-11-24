@@ -13,5 +13,5 @@ export const useUsageLimit = () => {
   });
   const { usage, limit } = data || { usage: 0, limit: 10 };
   const isLimited = usage >= limit;
-  return { data, error, isLoading, isLimited };
+  return { limit, usage, error, isLoading, isLimited };
 };

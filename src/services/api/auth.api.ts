@@ -20,6 +20,6 @@ export const startKakaoLogin = (): void => {
 
 // 회원 탈퇴
 export const userWithdrawal = async () => {
-  const { data } = await api.patch('/auth/withdraw');
+  const { data } = await api.delete('/auth/withdraw');
   return data;
 };

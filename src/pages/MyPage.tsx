@@ -12,21 +12,25 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components';
+import { useUsageLimit } from '@/services/hooks/usage';
+import { useWithdraw } from '@/services/hooks/auth';
 
 export const MyPage = () => {
   const { user, isLoading } = useAuth();
+  const { mutate: withdraw } = useWithdraw();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
-  // TODO: API 연동 필요
-  const usedCount = 3; // 사용한 횟수
-  const maxCount = 10; // 최대 횟수
+  const { usage: usedCount, limit: maxCount } = useUsageLimit();
+
   const remainingCount = maxCount - usedCount; // 남은 횟수
   const progressPercentage = (usedCount / maxCount) * 100;
 
   const handleDeleteAccount = () => {
-    // TODO: 회원탈퇴 API 연동
-    console.log('회원탈퇴 API 호출');
-    setIsDeleteDialogOpen(false);
+    withdraw(undefined, {
+      onSuccess: () => {
+        setIsDeleteDialogOpen(false);
+      },
+    });
   };
 
   if (isLoading) {
