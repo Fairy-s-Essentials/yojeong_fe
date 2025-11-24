@@ -17,37 +17,27 @@ const router = createBrowserRouter([
         element: <MainPage />,
       },
       {
-        path: '/input',
-        element: (
-          <ProtectedRoute>
-            <OriginalInputPage />
-          </ProtectedRoute>
-        ),
+        element: <ProtectedRoute />,
+        children: [
+          {
+            path: '/input',
+            element: <OriginalInputPage />,
+          },
+          {
+            path: '/summary',
+            element: <SummaryInputPage />,
+          },
+          {
+            path: '/analysis/:id',
+            element: <AnalysisPage />,
+          },
+          {
+            path: '/history',
+            element: <HistoryPage />,
+          },
+        ],
       },
-      {
-        path: '/summary',
-        element: (
-          <ProtectedRoute>
-            <SummaryInputPage />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: '/analysis/:id',
-        element: (
-          <ProtectedRoute>
-            <AnalysisPage />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: '/history',
-        element: (
-          <ProtectedRoute>
-            <HistoryPage />
-          </ProtectedRoute>
-        ),
-      },
+
       {
         path: '/mypage',
         element: <MyPage />,

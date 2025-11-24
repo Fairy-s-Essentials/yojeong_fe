@@ -1,12 +1,8 @@
-import { type ReactNode, useEffect } from 'react';
-import { useNavigate } from 'react-router';
+import { useEffect } from 'react';
+import { Outlet, useNavigate } from 'react-router';
 import { useAuth } from '@/hooks/auth/useAuth';
 
-interface ProtectedRouteProps {
-  children: ReactNode;
-}
-
-const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
+const ProtectedRoute = () => {
   const { isLoggedIn, isLoading } = useAuth();
   const navigate = useNavigate();
 
@@ -24,7 +20,7 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     return null;
   }
 
-  return <>{children}</>;
+  return <Outlet />;
 };
 
 export default ProtectedRoute;
