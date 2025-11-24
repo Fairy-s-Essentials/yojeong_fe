@@ -1,12 +1,33 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, LogOut, MessageSquare, UserCircle } from 'lucide-react';
 import logo from '@/assets/logo/yojeng.webp';
 import { useAuth } from '@/hooks/auth/useAuth';
-import { LoginButton, ProfileIcon } from '@/components';
+import {
+  Button,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  LoginButton,
+  ProfileIcon,
+  TextArea,
+} from '@/components';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from './Dropdown';
 
 const Header = ({ isMainPage = false }: { isMainPage?: boolean }) => {
   const navigate = useNavigate();
   const { user, isLoggedIn, isLoading, openLoginModal, openLogoutAlert } = useAuth();
+
+  const [isVocModalOpen, setIsVocModalOpen] = useState(false);
+  const [vocContent, setVocContent] = useState('');
 
   const handleProfileClick = () => {
     if (isLoggedIn) {
@@ -22,6 +43,20 @@ const Header = ({ isMainPage = false }: { isMainPage?: boolean }) => {
 
   const handleGoBack = () => {
     navigate(-1);
+  };
+
+  const handleMypageClick = () => {
+    navigate('/mypage');
+  };
+
+  const handleVocClick = () => {
+    setIsVocModalOpen(true);
+  };
+
+  const handleVocSubmit = () => {
+    // TODO: API 연동
+    setVocContent('');
+    setIsVocModalOpen(false);
   };
 
   return (
@@ -41,7 +76,62 @@ const Header = ({ isMainPage = false }: { isMainPage?: boolean }) => {
             {isLoading ? (
               <div className="w-10 h-10 rounded-full bg-app-gray-200 animate-pulse" />
             ) : isLoggedIn ? (
-              <ProfileIcon user={user} onClick={handleProfileClick} />
+              <>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button className="p-2 hover:bg-app-gray-50 rounded-full transition-colors">
+                      <ProfileIcon user={user} onClick={handleProfileClick} />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-48">
+                    <DropdownMenuItem onClick={handleMypageClick}>
+                      <UserCircle className="w-4 h-4 mr-2" />
+                      마이페이지
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={handleVocClick}>
+                      <MessageSquare className="w-4 h-4 mr-2" />
+                      문의·불편 접수
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={() => openLogoutAlert()}>
+                      <LogOut className="w-4 h-4 mr-2" />
+                      로그아웃
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
+                {/* VOC 모달 */}
+                <Dialog open={isVocModalOpen} onOpenChange={setIsVocModalOpen}>
+                  <DialogContent className="sm:max-w-lg">
+                    <DialogHeader>
+                      <DialogTitle>문의·불편 접수</DialogTitle>
+                      <DialogDescription>불편사항이나 개선 아이디어를 자유롭게 남겨주세요</DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-4 py-4">
+                      <TextArea
+                        placeholder="내용을 입력해주세요..."
+                        value={vocContent}
+                        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setVocContent(e.target.value)}
+                        className="min-h-[200px] resize-none"
+                      />
+                    </div>
+                    <div className="flex justify-end gap-2">
+                      <Button
+                        variant="outline"
+                        onClick={() => {
+                          setIsVocModalOpen(false);
+                          setVocContent('');
+                        }}
+                      >
+                        취소
+                      </Button>
+                      <Button onClick={handleVocSubmit} disabled={!vocContent.trim()}>
+                        제출
+                      </Button>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              </>
             ) : (
               <LoginButton />
             )}
