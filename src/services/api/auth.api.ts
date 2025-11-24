@@ -17,3 +17,9 @@ export const logout = async (): Promise<AuthResponse> => {
 export const startKakaoLogin = (): void => {
   window.location.href = `${api.defaults.baseURL}/auth/kakao`;
 };
+
+// 회원 탈퇴
+export const userWithdrawal = async () => {
+  const { data } = await api.delete('/auth/withdraw');
+  return data;
+};
