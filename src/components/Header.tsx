@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
-import { ArrowLeft, LogOut, MessageSquare, UserCircle } from 'lucide-react';
+import { ArrowLeft, LogOut, MessageSquare, UserCircle, Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
 import logo from '@/assets/logo/yojeng.webp';
 import { useAuth } from '@/hooks/auth/useAuth';
+import { useSubmitVocMutation } from '@/services/hooks/voc';
 import {
   Button,
   Dialog,
@@ -29,6 +31,8 @@ const Header = ({ isMainPage = false }: { isMainPage?: boolean }) => {
   const [isVocModalOpen, setIsVocModalOpen] = useState(false);
   const [vocContent, setVocContent] = useState('');
 
+  const { mutate: submitVoc, isPending: isSubmitting } = useSubmitVocMutation();
+
   const handleProfileClick = () => {
     if (isLoggedIn) {
       openLogoutAlert();
@@ -54,9 +58,26 @@ const Header = ({ isMainPage = false }: { isMainPage?: boolean }) => {
   };
 
   const handleVocSubmit = () => {
-    // TODO: API 연동
-    setVocContent('');
-    setIsVocModalOpen(false);
+    if (!vocContent.trim()) return;
+
+    submitVoc(
+      { message: vocContent.trim() },
+      {
+        onSuccess: () => {
+          toast.success('소중한 의견 감사합니다!', {
+            description: '전달된 내용을 검토하여 서비스 개선에 반영하겠습니다.',
+          });
+          setVocContent('');
+          setIsVocModalOpen(false);
+        },
+        onError: (error) => {
+          toast.error('제출 실패', {
+            description: '잠시 후 다시 시도해주세요.',
+          });
+          throw new Error('VOC 제출 실패', error);
+        },
+      },
+    );
   };
 
   return (
@@ -122,11 +143,19 @@ const Header = ({ isMainPage = false }: { isMainPage?: boolean }) => {
                           setIsVocModalOpen(false);
                           setVocContent('');
                         }}
+                        disabled={isSubmitting}
                       >
                         취소
                       </Button>
-                      <Button onClick={handleVocSubmit} disabled={!vocContent.trim()}>
-                        제출
+                      <Button onClick={handleVocSubmit} disabled={!vocContent.trim() || isSubmitting}>
+                        {isSubmitting ? (
+                          <>
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            제출 중...
+                          </>
+                        ) : (
+                          '제출'
+                        )}
                       </Button>
                     </div>
                   </DialogContent>
