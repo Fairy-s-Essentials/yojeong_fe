@@ -70,11 +70,10 @@ const Header = ({ isMainPage = false }: { isMainPage?: boolean }) => {
           setVocContent('');
           setIsVocModalOpen(false);
         },
-        onError: (error) => {
+        onError: () => {
           toast.error('제출 실패', {
             description: '잠시 후 다시 시도해주세요.',
           });
-          throw new Error('VOC 제출 실패', error);
         },
       },
     );
@@ -93,77 +92,6 @@ const Header = ({ isMainPage = false }: { isMainPage?: boolean }) => {
               <img src={logo} alt="요약의 정석" className="w-10 h-10" />
               요약의 정석
             </button>
-            {/* 로그인/프로필 */}
-            {isLoading ? (
-              <div className="w-10 h-10 rounded-full bg-app-gray-200 animate-pulse" />
-            ) : isLoggedIn ? (
-              <>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <button className="p-2 hover:bg-app-gray-50 rounded-full transition-colors">
-                      <ProfileIcon user={user} onClick={handleProfileClick} />
-                    </button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-48">
-                    <DropdownMenuItem onClick={handleMypageClick}>
-                      <UserCircle className="w-4 h-4 mr-2" />
-                      마이페이지
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={handleVocClick}>
-                      <MessageSquare className="w-4 h-4 mr-2" />
-                      문의·불편 접수
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => openLogoutAlert()}>
-                      <LogOut className="w-4 h-4 mr-2" />
-                      로그아웃
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-
-                {/* VOC 모달 */}
-                <Dialog open={isVocModalOpen} onOpenChange={setIsVocModalOpen}>
-                  <DialogContent className="sm:max-w-lg">
-                    <DialogHeader>
-                      <DialogTitle>문의·불편 접수</DialogTitle>
-                      <DialogDescription>불편사항이나 개선 아이디어를 자유롭게 남겨주세요</DialogDescription>
-                    </DialogHeader>
-                    <div className="space-y-4 py-4">
-                      <TextArea
-                        placeholder="내용을 입력해주세요..."
-                        value={vocContent}
-                        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setVocContent(e.target.value)}
-                        className="min-h-[200px] resize-none"
-                      />
-                    </div>
-                    <div className="flex justify-end gap-2">
-                      <Button
-                        variant="outline"
-                        onClick={() => {
-                          setIsVocModalOpen(false);
-                          setVocContent('');
-                        }}
-                        disabled={isSubmitting}
-                      >
-                        취소
-                      </Button>
-                      <Button onClick={handleVocSubmit} disabled={!vocContent.trim() || isSubmitting}>
-                        {isSubmitting ? (
-                          <>
-                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                            제출 중...
-                          </>
-                        ) : (
-                          '제출'
-                        )}
-                      </Button>
-                    </div>
-                  </DialogContent>
-                </Dialog>
-              </>
-            ) : (
-              <LoginButton />
-            )}
           </>
         ) : (
           <>
@@ -182,9 +110,81 @@ const Header = ({ isMainPage = false }: { isMainPage?: boolean }) => {
             >
               요약의 정석
             </button>
-            {/* 오른쪽 공간 유지를 위한 빈 div */}
-            <div className="w-20"></div>
           </>
+        )}
+        {/* 로그인/프로필 */}
+        {isLoading ? (
+          <div className="w-10 h-10 rounded-full bg-app-gray-200 animate-pulse" />
+        ) : isLoggedIn ? (
+          <>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  onClick={handleProfileClick}
+                  className="p-2 hover:bg-app-gray-50 rounded-full transition-colors"
+                >
+                  <ProfileIcon user={user} />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuItem onClick={handleMypageClick}>
+                  <UserCircle className="w-4 h-4 mr-2" />
+                  마이페이지
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleVocClick}>
+                  <MessageSquare className="w-4 h-4 mr-2" />
+                  문의·불편 접수
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => openLogoutAlert()}>
+                  <LogOut className="w-4 h-4 mr-2" />
+                  로그아웃
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* VOC 모달 */}
+            <Dialog open={isVocModalOpen} onOpenChange={setIsVocModalOpen}>
+              <DialogContent className="sm:max-w-lg">
+                <DialogHeader>
+                  <DialogTitle>문의·불편 접수</DialogTitle>
+                  <DialogDescription>불편사항이나 개선 아이디어를 자유롭게 남겨주세요</DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4 py-4">
+                  <TextArea
+                    placeholder="내용을 입력해주세요..."
+                    value={vocContent}
+                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setVocContent(e.target.value)}
+                    className="min-h-[200px] resize-none"
+                  />
+                </div>
+                <div className="flex justify-end gap-2">
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setIsVocModalOpen(false);
+                      setVocContent('');
+                    }}
+                    disabled={isSubmitting}
+                  >
+                    취소
+                  </Button>
+                  <Button onClick={handleVocSubmit} disabled={!vocContent.trim() || isSubmitting}>
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        제출 중...
+                      </>
+                    ) : (
+                      '제출'
+                    )}
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
+          </>
+        ) : (
+          <LoginButton />
         )}
       </div>
     </header>
