@@ -20,31 +20,36 @@ jobs:
           script: |
             set -e
 
-            # Load NVM (required for yarn)
+            # Load NVM (required for Node.js)
             export NVM_DIR="$HOME/.nvm"
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
             echo "Node:"
             node -v
 
-            echo "Yarn:"
-            yarn -v
+            echo "=== Install/Update pnpm ==="
+            if ! command -v pnpm &> /dev/null; then
+                echo "pnpm not found, installing..."
+                npm install -g pnpm
+            fi
+            
+            echo "pnpm:"
+            pnpm -v
 
             echo "=== Frontend: cd project ==="
             cd ${{ secrets.EC2_FRONTEND_PATH }}
 
-            echo "=== Frontend: Clean working directory ==="
+            echo "=== Frontend: Reset to clean state ==="
             git fetch origin main
             git reset --hard origin/main
-            git clean -fd
 
             echo "=== Frontend: git pull ==="
             git pull origin main
 
-            echo "=== Frontend: yarn install ==="
-            yarn install --frozen-lockfile
+            echo "=== Frontend: pnpm install ==="
+            pnpm install --frozen-lockfile
 
-            echo "=== Frontend: yarn build ==="
-            yarn tsc --noEmitOnError false && yarn vite build
+            echo "=== Frontend: pnpm build ==="
+            pnpm run build
 
             echo "=== Frontend Deployment Completed ==="
