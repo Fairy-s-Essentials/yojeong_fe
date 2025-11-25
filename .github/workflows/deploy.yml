@@ -33,6 +33,11 @@ jobs:
             echo "=== Frontend: cd project ==="
             cd ${{ secrets.EC2_FRONTEND_PATH }}
 
+            echo "=== Frontend: Clean working directory ==="
+            git fetch origin main
+            git reset --hard origin/main
+            git clean -fd
+
             echo "=== Frontend: git pull ==="
             git pull origin main
 
