@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { ArrowLeft, LogOut, MessageSquare, UserCircle, Loader2 } from 'lucide-react';
-import { toast } from 'sonner';
 import logo from '@/assets/logo/yojeng.webp';
 import { useAuth } from '@/hooks/auth/useAuth';
 import { useSubmitVocMutation } from '@/services/hooks/voc';
+import { showToast } from '@/utils/toast';
 import {
   Button,
   Dialog,
@@ -64,16 +64,12 @@ const Header = ({ isMainPage = false }: { isMainPage?: boolean }) => {
       { message: vocContent.trim() },
       {
         onSuccess: () => {
-          toast.success('소중한 의견 감사합니다!', {
-            description: '전달된 내용을 검토하여 서비스 개선에 반영하겠습니다.',
-          });
+          showToast('VOC_SUBMIT_SUCCESS');
           setVocContent('');
           setIsVocModalOpen(false);
         },
         onError: () => {
-          toast.error('제출 실패', {
-            description: '잠시 후 다시 시도해주세요.',
-          });
+          showToast('VOC_SUBMIT_ERROR');
         },
       },
     );
