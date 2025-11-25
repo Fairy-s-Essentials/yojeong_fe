@@ -1,7 +1,7 @@
 import { Outlet } from 'react-router';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router';
-import { ALERT_MESSAGE } from '@/constants/alertMessage';
+import { showToast } from '@/utils/toast';
 import { useUsageLimit } from '@/services/hooks/usage';
 
 export const UsageCheckRoute = () => {
@@ -11,7 +11,7 @@ export const UsageCheckRoute = () => {
 
   useEffect(() => {
     if (!isLoading && isLimited) {
-      alert(ALERT_MESSAGE.USAGE_LIMIT);
+      showToast('USAGE_LIMIT_EXCEEDED');
       navigate('/', { replace: true });
     }
   }, [isLimited, isLoading, navigate]);
