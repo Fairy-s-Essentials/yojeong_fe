@@ -68,9 +68,7 @@ export const OriginalInputPage = () => {
             placeholder={`읽은 글의 전체 내용을 입력해주세요... (최소 ${ORIGINAL_LENGTH_LIMITS.MIN.toLocaleString()}자)`}
             value={content}
             onChange={(e) => {
-              if (e.target.value.length <= ORIGINAL_LENGTH_LIMITS.MAX) {
-                setContent(e.target.value);
-              }
+              setContent(e.target.value);
             }}
             className={`min-h-[400px] border-app-gray-200 rounded-lg focus:ring-2 focus:border-app-blue bg-white resize-y p-4 ${
               isTooShort
