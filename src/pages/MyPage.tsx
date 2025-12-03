@@ -154,28 +154,27 @@ export const MyPage = () => {
         </div>
       </div>
 
-      {/* 회원탈퇴 확인 다이얼로그 */}
-      <AlertDialog open={isDeleteClicked} onOpenChange={setIsDeleteClicked}>
-        <AlertDialogContent className="bg-white">
-          <AlertDialogHeader>
-            <AlertDialogTitle className="text-app-gray-800">정말 떠나시려는 이유가 있을까요?</AlertDialogTitle>
-            <AlertDialogDescription className="text-app-gray-600">
-              여러분의 한 마디가 서비스 개선에 큰 도움이 됩니다.
+      {/* 회원 탈퇴 확인 다이얼로그 */}
+      <Dialog open={isDeleteClicked} onOpenChange={setIsDeleteClicked}>
+        <DialogContent className="bg-white">
+          <DialogHeader>
+            <DialogTitle className="text-app-gray-800">정말 떠나시려는 이유가 있을까요?</DialogTitle>
+            <DialogDescription className="text-app-gray-600">
+              여러분의 한 마디가 큰 도움이 됩니다.
               <br />
               알려주시면 더 나은 서비스로 개선하겠습니다.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel className="cursor-pointer">취소</AlertDialogCancel>
-            <AlertDialogAction onClick={handleVocClick} className="cursor-pointer bg-app-red hover:bg-red-700">
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-end gap-2">
+            <Button onClick={handleVocClick} className="cursor-pointer">
               문의·불편 접수
-            </AlertDialogAction>
-            <AlertDialogAction onClick={handleDeleteClick} className="cursor-pointer bg-app-red hover:bg-red-700">
+            </Button>
+            <Button onClick={handleDeleteClick} className="cursor-pointer bg-app-red hover:bg-red-500">
               탈퇴하기
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* VOC 모달 */}
       <Dialog open={isVocModalOpen} onOpenChange={setIsVocModalOpen}>
