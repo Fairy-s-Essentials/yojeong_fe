@@ -3,6 +3,7 @@ import { checkAuth, logout } from '@/services/api/auth.api';
 import type { User } from '@/types/auth.type';
 import { LoginModal, LogoutModal } from '@/components';
 import { AuthContext, type AuthContextValue } from './AuthContext';
+import { showToast } from '@/utils/toast';
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -54,9 +55,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       await logout();
       await loadUser();
       setIsLogoutAlertOpen(false);
-      alert('로그아웃되었습니다.');
+      showToast('LOGOUT_SUCCESS');
     } catch {
-      alert('로그아웃에 실패했습니다.');
+      showToast('LOGOUT_ERROR');
     }
   };
 

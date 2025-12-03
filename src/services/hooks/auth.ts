@@ -19,12 +19,6 @@ export const useWithdraw = () => {
 
       // 메인 페이지로 이동
       navigate('/', { replace: true });
-
-      // 완료 알림
-      alert('회원탈퇴가 완료되었습니다.');
-    },
-    onError: () => {
-      alert('회원탈퇴에 실패했습니다.');
     },
   });
 };

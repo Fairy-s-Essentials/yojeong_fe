@@ -14,6 +14,26 @@ export const TOAST_MESSAGE = {
     title: '사용 제한',
     description: '오늘의 분석 요청 가능 횟수를 모두 사용하셨어요. 내일 다시 이용해주세요!',
   },
+  WITH_DRAW_SUCCESS: {
+    type: 'success' as const,
+    title: '회원 탈퇴가 완료되었습니다.',
+    description: '이용해주셔서 감사합니다.',
+  },
+  WITH_DRAW_ERROR: {
+    type: 'error' as const,
+    title: '회원 탈퇴 실패',
+    description: '잠시 후 다시 시도해주세요.',
+  },
+  LOGOUT_SUCCESS: {
+    type: 'success' as const,
+    title: '로그아웃 완료',
+    description: '정상적으로 로그아웃되었습니다.',
+  },
+  LOGOUT_ERROR: {
+    type: 'error' as const,
+    title: '로그아웃 실패',
+    description: '잠시 후 다시 시도해주세요.',
+  },
 } as const;
 
 export type ToastMessageKey = keyof typeof TOAST_MESSAGE;

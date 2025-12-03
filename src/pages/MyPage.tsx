@@ -71,6 +71,11 @@ export const MyPage = () => {
     withdraw(undefined, {
       onSuccess: () => {
         setIsDeleteDialogOpen(false);
+        showToast('WITH_DRAW_SUCCESS');
+      },
+      onError: () => {
+        setIsDeleteDialogOpen(false);
+        showToast('WITH_DRAW_ERROR');
       },
     });
   };
