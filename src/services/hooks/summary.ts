@@ -3,25 +3,12 @@ import { getDetailSummary, saveLearningNote, saveSummary } from '../api/summary.
 import type { SaveSummaryProps } from '@/types/summary.type';
 
 /**
- * 요약 저장 (Mutation)
+ * 요약 저장 (Mutation) - SSE 방식
+ * jobId를 반환하며, 쿼리 무효화는 SSE 완료 시 SummarySSEContext에서 처리
  */
 export const useSaveSummary = () => {
-  const queryClient = useQueryClient();
-
   return useMutation({
-    mutationFn: ({ data, signal }: { data: SaveSummaryProps; signal?: AbortSignal }) => saveSummary(data, signal),
-    onSuccess: () => {
-      // 메인 페이지 및 히스토리 페이지 쿼리 무효화
-      [
-        ['mainAnalysis'],
-        ['mainRecentSummary'],
-        ['historyAnalysis'],
-        ['accuracyTrend'],
-        ['calendarYears'],
-        ['calendarData'],
-        ['summaries'],
-      ].forEach((queryKey) => queryClient.invalidateQueries({ queryKey }));
-    },
+    mutationFn: (data: SaveSummaryProps) => saveSummary(data),
   });
 };
 

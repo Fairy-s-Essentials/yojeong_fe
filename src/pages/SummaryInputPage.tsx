@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { Check } from 'lucide-react';
 import { SUMMARY_TIPS, CRITICAL_LENGTH_LIMITS } from '@/constants';
@@ -6,7 +6,7 @@ import { Button, TipBox, TextArea } from '@/components';
 import { useSummaryValidation } from '@/hooks';
 import { getOriginalData, clearOriginalData } from '@/services/storage';
 import { useSaveSummary } from '@/services/hooks/summary';
-import { useLoading } from '@/contexts';
+import { useSummarySSE } from '@/contexts';
 
 export const SummaryInputPage = () => {
   const navigate = useNavigate();
@@ -15,6 +15,7 @@ export const SummaryInputPage = () => {
   const [originalLink, setOriginalLink] = useState<string>('');
   const [originalContent, setOriginalContent] = useState<string>('');
   const [originalLength, setOriginalLength] = useState<number>(0);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   // 링크 및 원문 확인 - 추후 삭제
   console.log(originalLink);
@@ -25,9 +26,8 @@ export const SummaryInputPage = () => {
   const [weakness, setWeakness] = useState<string>(''); // 이 글의 약점
   const [opposite, setOpposite] = useState<string>(''); // 반대 의견
 
-  const { mutate: saveSummaryMutation } = useSaveSummary();
-  const { showLoading, hideLoading } = useLoading();
-  const abortControllerRef = useRef<AbortController | null>(null);
+  const { mutateAsync: saveSummaryMutation } = useSaveSummary();
+  const { startSSE } = useSummarySSE();
 
   // 로컬스토리지에서 원문 데이터 불러오기
   useEffect(() => {
@@ -51,70 +51,32 @@ export const SummaryInputPage = () => {
       opposite,
     });
 
-  // 취소 함수
-  const handleCancel = () => {
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-      abortControllerRef.current = null;
+  // 분석 시작 함수 (SSE 방식)
+  const handleSubmit = async () => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+
+    try {
+      // 1. Summary 생성 요청 → jobId 반환
+      const { jobId } = await saveSummaryMutation({
+        originalText: originalContent,
+        originalUrl: originalLink,
+        userSummary: summary,
+        criticalWeakness: weakness,
+        criticalOpposite: opposite,
+      });
+
+      // 2. 원문 데이터 삭제
+      clearOriginalData();
+
+      // 3. 메인 페이지로 이동 후 SSE 구독 시작
+      navigate('/', { replace: true });
+      startSSE(jobId);
+    } catch (error) {
+      console.error(error);
+      alert('요약 요청에 실패하였습니다.');
+      setIsSubmitting(false);
     }
-    hideLoading();
-  };
-
-  // 분석 시작 함수
-  const handleSubmit = () => {
-    // AbortController 생성
-    const controller = new AbortController();
-    abortControllerRef.current = controller;
-
-    // 로딩 시작
-    showLoading({
-      message: 'AI가 요약을 분석하고 있어요',
-      subMessage: '잠시만 기다려주세요...',
-      showCancelButton: true,
-      onCancel: handleCancel,
-    });
-
-    saveSummaryMutation(
-      {
-        data: {
-          originalText: originalContent,
-          originalUrl: originalLink,
-          userSummary: summary,
-          criticalWeakness: weakness,
-          criticalOpposite: opposite,
-        },
-        signal: controller.signal,
-      },
-      {
-        onSuccess: (res) => {
-          clearOriginalData();
-          abortControllerRef.current = null;
-          // 로딩 메시지 업데이트 (페이지 전환 시에도 유지)
-          showLoading({
-            message: '분석 결과를 불러오는 중이에요',
-            subMessage: '곧 완료됩니다...',
-            showCancelButton: false,
-          });
-          navigate('/', { replace: true });
-          navigate(`/analysis/${res.resultId}`);
-        },
-        onError: (error) => {
-          abortControllerRef.current = null;
-          hideLoading();
-
-          // 취소된 경우 에러 처리 안 함
-          if (error instanceof Error && error.name === 'CanceledError') {
-            console.log('요약 저장이 취소되었습니다.');
-            return;
-          }
-
-          console.error(error);
-          alert('요약 저장에 실패하였습니다.');
-          navigate('/', { replace: true });
-          navigate('/input');
-        },
-      },
-    );
   };
 
   return (
