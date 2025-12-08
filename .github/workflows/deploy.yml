@@ -11,45 +11,32 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 10.24.0
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm run build
+
       - name: Deploy to EC2
-        uses: appleboy/ssh-action@v1.0.3
+        uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            set -e
-
-            # Load NVM (required for Node.js)
-            export NVM_DIR="$HOME/.nvm"
-            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-
-            echo "Node:"
-            node -v
-
-            echo "=== Install/Update pnpm ==="
-            if ! command -v pnpm &> /dev/null; then
-                echo "pnpm not found, installing..."
-                npm install -g pnpm
-            fi
-            
-            echo "pnpm:"
-            pnpm -v
-
-            echo "=== Frontend: cd project ==="
-            cd ${{ secrets.EC2_FRONTEND_PATH }}
-
-            echo "=== Frontend: Reset to clean state ==="
-            git fetch origin main
-            git reset --hard origin/main
-
-            echo "=== Frontend: git pull ==="
-            git pull origin main
-
-            echo "=== Frontend: pnpm install ==="
-            pnpm install --frozen-lockfile
-
-            echo "=== Frontend: pnpm build ==="
-            pnpm run build
-
-            echo "=== Frontend Deployment Completed ==="
+          source: "dist/*"
+          target: "${{ secrets.EC2_FRONTEND_PATH }}/dist"
+          strip_components: 1
+          rm: true
