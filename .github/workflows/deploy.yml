@@ -29,6 +29,8 @@ jobs:
 
       - name: Build
         run: pnpm run build
+        env:
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
 
       - name: Deploy to EC2
         uses: appleboy/scp-action@v0.1.7
