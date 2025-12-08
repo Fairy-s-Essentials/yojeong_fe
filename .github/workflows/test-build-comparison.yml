@@ -20,7 +20,7 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
         with:
-          version: 8
+          version: 10.24.0  # 👈 여기 수정
 
       - name: Install dependencies
         run: |
