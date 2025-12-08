@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router';
 import { Check } from 'lucide-react';
 import { SUMMARY_TIPS, CRITICAL_LENGTH_LIMITS } from '@/constants';
 import { Button, TipBox, TextArea } from '@/components';
+import { showToast } from '@/utils/toast';
 import { useSummaryValidation } from '@/hooks';
 import { getOriginalData, clearOriginalData } from '@/services/storage';
 import { useSaveSummary } from '@/services/hooks/summary';
@@ -74,7 +75,7 @@ export const SummaryInputPage = () => {
       startSSE(jobId);
     } catch (error) {
       console.error(error);
-      alert('요약 요청에 실패하였습니다.');
+      showToast('SUMMARY_ERROR');
       setIsSubmitting(false);
     }
   };
