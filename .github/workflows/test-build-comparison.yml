@@ -1,0 +1,148 @@
+name: Build Time Comparison (GitHub vs EC2)
+
+on:
+  workflow_dispatch:  # 수동 실행
+
+jobs:
+  # Job 1: GitHub Actions에서 빌드
+  build-on-github:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Install dependencies
+        run: |
+          echo "===== GitHub Actions Install Start ====="
+          echo "START_INSTALL=$(date +%s)" >> $GITHUB_ENV
+          pnpm install --frozen-lockfile
+          echo "END_INSTALL=$(date +%s)" >> $GITHUB_ENV
+          echo "===== GitHub Actions Install End ====="
+
+      - name: Build
+        run: |
+          echo "===== GitHub Actions Build Start ====="
+          echo "START_BUILD=$(date +%s)" >> $GITHUB_ENV
+          pnpm run build
+          echo "END_BUILD=$(date +%s)" >> $GITHUB_ENV
+          echo "===== GitHub Actions Build End ====="
+          
+      - name: Show bundle analysis
+        run: |
+          echo "===== Bundle Analysis ====="
+          echo "Dist folder size:"
+          du -sh dist/
+          echo ""
+          echo "Asset details:"
+          ls -lh dist/assets/ | grep -E '\.(js|css)$'
+          echo ""
+          echo "Total modules in source:"
+          find src -type f \( -name "*.tsx" -o -name "*.ts" \) | wc -l
+          echo ""
+          echo "Total lines of code:"
+          find src -type f \( -name "*.tsx" -o -name "*.ts" \) -exec wc -l {} + | tail -1
+
+      - name: Calculate and Report Duration
+        run: |
+          INSTALL_DURATION=$((END_INSTALL - START_INSTALL))
+          BUILD_DURATION=$((END_BUILD - START_BUILD))
+          TOTAL_DURATION=$((END_BUILD - START_INSTALL))
+          
+          echo "## 🚀 GitHub Actions Build Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Phase | Duration |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|----------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Install | ${INSTALL_DURATION}s |" >> $GITHUB_STEP_SUMMARY
+          echo "| Build | ${BUILD_DURATION}s |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Total** | **${TOTAL_DURATION}s** |" >> $GITHUB_STEP_SUMMARY
+
+  # Job 2: EC2에서 빌드
+  build-on-ec2:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Build on EC2 and Measure Time
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          command_timeout: 15m
+          script: |
+            set -e
+            
+            # Load NVM
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            
+            cd ${{ secrets.EC2_FRONTEND_PATH }}
+            
+            echo "===== EC2 Environment Info ====="
+            echo "Node version: $(node -v)"
+            echo "pnpm version: $(pnpm -v)"
+            echo "CPU info:"
+            lscpu | grep -E "Model name|CPU\(s\)|MHz"
+            echo "Memory info:"
+            free -h
+            echo ""
+            
+            echo "===== EC2 Git Pull Start ====="
+            START_TOTAL=$(date +%s)
+            git fetch origin main
+            git reset --hard origin/main
+            git pull origin main
+            END_GIT=$(date +%s)
+            echo "===== EC2 Git Pull End ====="
+            echo ""
+            
+            echo "===== EC2 Install Start ====="
+            START_INSTALL=$(date +%s)
+            pnpm install --frozen-lockfile
+            END_INSTALL=$(date +%s)
+            echo "===== EC2 Install End ====="
+            echo ""
+            
+            echo "===== EC2 Build Start ====="
+            START_BUILD=$(date +%s)
+            pnpm run build
+            END_BUILD=$(date +%s)
+            echo "===== EC2 Build End ====="
+            echo ""
+            
+            echo "===== Bundle Analysis ====="
+            echo "Dist folder size:"
+            du -sh dist/
+            echo ""
+            echo "Asset details:"
+            ls -lh dist/assets/ | grep -E '\.(js|css)$' || true
+            echo ""
+            echo "Total modules in source:"
+            find src -type f \( -name "*.tsx" -o -name "*.ts" \) | wc -l
+            echo ""
+            echo "Total lines of code:"
+            find src -type f \( -name "*.tsx" -o -name "*.ts" \) -exec wc -l {} + | tail -1
+            echo ""
+            
+            # Calculate durations
+            GIT_DURATION=$((END_GIT - START_TOTAL))
+            INSTALL_DURATION=$((END_INSTALL - START_INSTALL))
+            BUILD_DURATION=$((END_BUILD - START_BUILD))
+            TOTAL_DURATION=$((END_BUILD - START_TOTAL))
+            
+            echo "===== EC2 Build Time Summary ====="
+            echo "Git Pull: ${GIT_DURATION}s"
+            echo "Install: ${INSTALL_DURATION}s"
+            echo "Build: ${BUILD_DURATION}s"
+            echo "Total: ${TOTAL_DURATION}s"
+            echo "===== End ====="
