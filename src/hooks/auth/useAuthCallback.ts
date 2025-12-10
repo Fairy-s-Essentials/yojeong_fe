@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router';
+import { showToast } from '@/utils/toast';
 
 export const useAuthCallback = () => {
   const navigate = useNavigate();
@@ -11,9 +12,15 @@ export const useAuthCallback = () => {
     if (success === 'true') {
       navigate('/');
     } else if (success === 'false') {
-      // 로그인 실패
       const error = params.get('error');
-      alert(`로그인 실패: ${error || '알 수 없는 오류'}`);
+
+      // 탈퇴 후 24시간 동안 재가입 제한
+      if (error === 'rejoin_restricted') {
+        showToast('LOGIN_RESTRICTED');
+      } else {
+        showToast('LOGIN_ERROR');
+      }
+
       navigate('/');
     }
   }, [navigate]);
