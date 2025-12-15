@@ -3,6 +3,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import type { SSEStep, SSEStatus } from '@/types/summary.type';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const STORAGE_KEY = 'active-sse-job-id';
 
 interface SSEState {
   isProcessing: boolean;

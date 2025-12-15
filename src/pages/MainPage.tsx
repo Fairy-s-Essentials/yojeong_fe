@@ -8,10 +8,14 @@ import { useMainAnalysisQuery, useMainRecentSummaryQuery } from '@/services/hook
 import { useAuth } from '@/hooks/auth/useAuth';
 import { useUsageLimit } from '@/services/hooks/usage';
 import { ALERT_MESSAGE } from '@/constants/alertMessage';
+import { useSummarySSE } from '@/contexts';
 
 export const MainPage = () => {
   const { isLoggedIn, isLoading } = useAuth();
   const { isLimited } = useUsageLimit();
+  const {
+    state: { isProcessing },
+  } = useSummarySSE();
 
   return (
     <>
@@ -19,7 +23,7 @@ export const MainPage = () => {
       {!isLoading &&
         (isLoggedIn ? (
           <AsyncBoundary loadingFallback={<SkeletonMainPage />} errorFallback={ErrorFallback}>
-            <MainContent isLimited={isLimited} />
+            <MainContent isLimited={isLimited} isProcessing={isProcessing} />
           </AsyncBoundary>
         ) : (
           <MainEmpty />
@@ -29,7 +33,7 @@ export const MainPage = () => {
 };
 
 // 로그인한 사용자 콘텐츠
-const MainContent = ({ isLimited }: { isLimited: boolean }) => {
+const MainContent = ({ isLimited, isProcessing }: { isLimited: boolean; isProcessing: boolean }) => {
   const navigate = useNavigate();
   const { data: mainAnalysis } = useMainAnalysisQuery();
   const { data: mainRecentSummary } = useMainRecentSummaryQuery();
@@ -42,7 +46,7 @@ const MainContent = ({ isLimited }: { isLimited: boolean }) => {
         <p className="text-app-gray-500 mb-8">AI보다 먼저 읽고, 더 깊게 이해하세요</p>
         <Button
           onClick={() => navigate('/input')}
-          disabled={isLimited}
+          disabled={isLimited || isProcessing}
           className={`px-4 py-6 rounded-lg shadow-lg transition-all ${
             isLimited
               ? 'bg-app-gray-300 text-app-gray-500 cursor-not-allowed'
@@ -52,6 +56,7 @@ const MainContent = ({ isLimited }: { isLimited: boolean }) => {
           <BookOpen className="w-5 h-5 mr-2" />새 글 읽기
         </Button>
         {isLimited && <p className="text-red-500 text-sm mt-3 font-medium">{ALERT_MESSAGE.USAGE_LIMIT}</p>}
+        {isProcessing && <p className="text-app-gray-500 text-sm mt-3 font-medium">{ALERT_MESSAGE.PROCESSING}</p>}
       </div>
 
       {/* 학습 통계 영역 - useSuspenseQuery로 data 항상 정의됨 */}
