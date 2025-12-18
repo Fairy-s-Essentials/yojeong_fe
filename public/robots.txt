@@ -1,0 +1,22 @@
+# robots.txt for yojeong.ai.kr
+# Last updated: 2025-12-19
+
+# Default rule for all crawlers
+User-agent: *
+
+# Allow main page (landing page)
+Allow: /$
+
+# Disallow authenticated pages (personalized content)
+Disallow: /input
+Disallow: /summary
+Disallow: /analysis/
+Disallow: /history
+Disallow: /mypage
+Disallow: /auth/
+
+# Sitemap location
+Sitemap: https://yojeong.ai.kr/sitemap.xml
+
+# Note: Future public pages like /about, /terms, /privacy will be allowed by default
+
