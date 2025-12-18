@@ -64,8 +64,8 @@ createRoot(document.getElementById('root')!).render(
     <QueryClientProvider client={queryClient}>
       <LoadingProvider>
         <AuthProvider>
-          <Router />
           <Toaster position="top-center" richColors closeButton />
+          <Router />
           <ReactQueryDevtools initialIsOpen={false} />
         </AuthProvider>
       </LoadingProvider>

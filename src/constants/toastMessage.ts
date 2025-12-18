@@ -34,6 +34,21 @@ export const TOAST_MESSAGE = {
     title: '로그아웃 실패',
     description: '잠시 후 다시 시도해주세요.',
   },
+  LOGIN_ERROR: {
+    type: 'error' as const,
+    title: '로그인 실패',
+    description: '잠시 후 다시 시도해주세요.',
+  },
+  LOGIN_RESTRICTED: {
+    type: 'error' as const,
+    title: '로그인 실패',
+    description: '탈퇴 후 24시간 동안은 재가입할 수 없습니다.',
+  },
+  SUMMARY_ERROR: {
+    type: 'error' as const,
+    title: '요약 요청 실패',
+    description: '잠시 후 다시 시도해주세요.',
+  },
 } as const;
 
 export type ToastMessageKey = keyof typeof TOAST_MESSAGE;
