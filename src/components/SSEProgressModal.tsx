@@ -47,7 +47,7 @@ export const SSEProgressModal = () => {
   // 에러 상태
   if (state.error) {
     return (
-      <div className="fixed bottom-6 right-6 z-50 w-full max-w-sm">
+      <div className="fixed bottom-6 left-4 right-4 sm:left-auto sm:right-6 z-50 w-auto sm:w-full sm:max-w-sm">
         <div className="bg-white border border-red-200 rounded-xl shadow-xl p-4">
           <div className="flex items-start gap-3">
             <AlertCircle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
@@ -76,7 +76,7 @@ export const SSEProgressModal = () => {
   // 완료 상태
   if (state.status === 'completed' && state.resultId) {
     return (
-      <div className="fixed bottom-6 right-6 z-50 w-full max-w-sm">
+      <div className="fixed bottom-6 left-4 right-4 sm:left-auto sm:right-6 z-50 w-auto sm:w-full sm:max-w-sm">
         <div className="bg-white border border-green-200 rounded-xl shadow-xl p-4">
           <div className="flex items-start justify-between mb-3">
             <div className="flex items-center gap-3">
@@ -115,7 +115,7 @@ export const SSEProgressModal = () => {
 
   // 진행 중 상태
   return (
-    <div className="fixed bottom-6 right-6 z-50 w-full max-w-sm">
+    <div className="fixed bottom-6 left-4 right-4 sm:left-auto sm:right-6 z-50 w-auto sm:w-full sm:max-w-sm">
       <div className="bg-white border border-app-blue/20 rounded-xl shadow-xl p-4">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-3">
