@@ -2,6 +2,7 @@ const ORIGINAL_DATA_KEY = 'yojeong_original_data';
 
 export interface OriginalData {
   content: string;
+  url?: string;
 }
 
 export const saveOriginalData = (data: OriginalData): void => {

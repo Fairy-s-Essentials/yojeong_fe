@@ -3,9 +3,10 @@ import { useNavigate } from 'react-router';
 import { ArrowRight, Link as LinkIcon, FileText, RefreshCw } from 'lucide-react';
 import { ORIGINAL_LENGTH_LIMITS } from '@/constants';
 import { Button, Input, TextArea } from '@/components';
-import { useOriginalValidation } from '@/hooks';
+import { useOriginalValidation, useExtractStatus } from '@/hooks';
 import { saveOriginalData, getOriginalData, clearOriginalData } from '@/services/storage';
 import { useExtractContentMutation } from '@/services/hooks/extract';
+import type { ExtractStatus } from '@/types/extract.type';
 
 export const OriginalInputPage = () => {
   const navigate = useNavigate();
@@ -14,13 +15,19 @@ export const OriginalInputPage = () => {
   const [url, setUrl] = useState('');
   const [content, setContent] = useState('');
   const [isContentLoaded, setIsContentLoaded] = useState(false);
+  const [extractStatus, setExtractStatus] = useState<ExtractStatus | null>(null);
 
   const { mutate: extractContent, isPending: isExtracting } = useExtractContentMutation();
+  const extractResult = useExtractStatus(extractStatus);
 
   useEffect(() => {
     const originalData = getOriginalData();
     if (originalData) {
       setContent(originalData.content);
+      if (originalData.url) {
+        setUrl(originalData.url);
+        setIsContentLoaded(true);
+      }
     }
   }, []);
 
@@ -31,7 +38,7 @@ export const OriginalInputPage = () => {
   };
 
   const handleNextPage = () => {
-    saveOriginalData({ content });
+    saveOriginalData({ content, url: inputMode === 'link' ? url : undefined });
     navigate('/summary');
   };
 
@@ -40,8 +47,11 @@ export const OriginalInputPage = () => {
       { url },
       {
         onSuccess: (res) => {
-          if (res.data?.content) {
-            setContent(res.data.content);
+          if (res.data) {
+            setExtractStatus(res.data.status);
+            if (res.data.content) {
+              setContent(res.data.content);
+            }
             setIsContentLoaded(true);
           }
         },
@@ -53,6 +63,7 @@ export const OriginalInputPage = () => {
     setUrl('');
     setContent('');
     setIsContentLoaded(false);
+    setExtractStatus(null);
     clearOriginalData();
   };
 
@@ -143,6 +154,9 @@ export const OriginalInputPage = () => {
                 </Button>
               )}
             </div>
+            <p className={`text-sm min-h-10 mt-1 ${extractResult?.isUsable ? 'text-app-green' : 'text-app-red'}`}>
+              {extractResult?.message}
+            </p>
           </div>
         ) : (
           <div>
@@ -207,7 +221,7 @@ export const OriginalInputPage = () => {
           취소
         </Button>
         <Button
-          disabled={!isValid || (inputMode === 'link' && !isContentLoaded)}
+          disabled={inputMode === 'link' ? !extractResult?.isUsable : !isValid}
           onClick={handleNextPage}
           className="flex-1 h-12 bg-app-blue hover:bg-app-blue-dark text-white disabled:bg-app-gray-200 disabled:text-app-gray-400 disabled:cursor-not-allowed cursor-pointer"
         >
