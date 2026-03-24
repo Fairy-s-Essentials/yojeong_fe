@@ -3,6 +3,16 @@ import { useNavigate } from 'react-router';
 import { ArrowRight, Link as LinkIcon, FileText, RefreshCw } from 'lucide-react';
 import { ORIGINAL_LENGTH_LIMITS } from '@/constants';
 import { Button, Input, TextArea } from '@/components';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/AlertDialog';
 import { useOriginalValidation, useExtractStatus } from '@/hooks';
 import { saveOriginalData, getOriginalData, clearOriginalData } from '@/services/storage';
 import { useExtractContentMutation } from '@/services/hooks/extract';
@@ -12,33 +22,45 @@ export const OriginalInputPage = () => {
   const navigate = useNavigate();
 
   const [inputMode, setInputMode] = useState<'link' | 'text'>('link');
+  const [pendingMode, setPendingMode] = useState<'link' | 'text' | null>(null);
+
   const [url, setUrl] = useState('');
-  const [content, setContent] = useState('');
   const [isContentLoaded, setIsContentLoaded] = useState(false);
+
+  const [userContent, setUserContent] = useState('');
   const [extractStatus, setExtractStatus] = useState<ExtractStatus | null>(null);
 
+  const { contentLength, isValid, isTooShort, isTooLong } = useOriginalValidation({ content: userContent });
   const { mutate: extractContent, isPending: isExtracting } = useExtractContentMutation();
   const extractResult = useExtractStatus(extractStatus);
 
   useEffect(() => {
     const originalData = getOriginalData();
+
     if (originalData) {
-      setContent(originalData.content);
+      setUserContent(originalData.content);
+      setInputMode(originalData.inputMode);
       if (originalData.url) {
         setUrl(originalData.url);
         setIsContentLoaded(true);
       }
+      if (originalData.extractStatus) {
+        setExtractStatus(originalData.extractStatus as ExtractStatus);
+      }
     }
   }, []);
-
-  const { contentLength, isValid, isTooShort, isTooLong } = useOriginalValidation({ content });
 
   const handleGoBack = () => {
     navigate(-1);
   };
 
   const handleNextPage = () => {
-    saveOriginalData({ content, url: inputMode === 'link' ? url : undefined });
+    saveOriginalData({
+      content: userContent,
+      inputMode,
+      url: inputMode === 'link' ? url : undefined,
+      extractStatus: inputMode === 'link' && extractStatus ? extractStatus : undefined,
+    });
     navigate('/summary');
   };
 
@@ -50,7 +72,7 @@ export const OriginalInputPage = () => {
           if (res.data) {
             setExtractStatus(res.data.status);
             if (res.data.content) {
-              setContent(res.data.content);
+              setUserContent(res.data.content);
             }
             setIsContentLoaded(true);
           }
@@ -59,12 +81,34 @@ export const OriginalInputPage = () => {
     );
   };
 
-  const handleEditLink = () => {
+  const resetInputText = () => {
     setUrl('');
-    setContent('');
+    setUserContent('');
     setIsContentLoaded(false);
     setExtractStatus(null);
     clearOriginalData();
+  };
+
+  const handleEditLink = () => {
+    resetInputText();
+  };
+
+  const hasInput = inputMode === 'link' ? !!(url || userContent) : !!userContent;
+
+  const handleSwitchMode = (mode: 'link' | 'text') => {
+    if (mode === inputMode) return;
+    if (hasInput) {
+      setPendingMode(mode);
+    } else {
+      setInputMode(mode);
+    }
+  };
+
+  const handleConfirmSwitch = () => {
+    if (!pendingMode) return;
+    setInputMode(pendingMode);
+    resetInputText();
+    setPendingMode(null);
   };
 
   return (
@@ -82,12 +126,7 @@ export const OriginalInputPage = () => {
         <div className="flex gap-3">
           <Button
             variant="outline"
-            onClick={() => {
-              setInputMode('link');
-              setContent('');
-              setUrl('');
-              setIsContentLoaded(false);
-            }}
+            onClick={() => handleSwitchMode('link')}
             className={`flex-1 h-14 rounded-lg border-2 cursor-pointer ${
               inputMode === 'link'
                 ? 'border-app-blue bg-app-blue/5 text-app-blue'
@@ -99,12 +138,7 @@ export const OriginalInputPage = () => {
           </Button>
           <Button
             variant="outline"
-            onClick={() => {
-              setInputMode('text');
-              setContent('');
-              setUrl('');
-              setIsContentLoaded(false);
-            }}
+            onClick={() => handleSwitchMode('text')}
             className={`flex-1 h-14 rounded-lg border-2 cursor-pointer ${
               inputMode === 'text'
                 ? 'border-app-blue bg-app-blue/5 text-app-blue'
@@ -166,9 +200,9 @@ export const OriginalInputPage = () => {
             <TextArea
               id="content"
               placeholder={`읽은 글의 전체 내용을 입력해주세요... (최소 ${ORIGINAL_LENGTH_LIMITS.MIN.toLocaleString()}자)`}
-              value={content}
+              value={userContent}
               onChange={(e) => {
-                setContent(e.target.value);
+                setUserContent(e.target.value);
               }}
               className={`min-h-[400px] border-app-gray-200 rounded-lg focus:ring-2 focus:border-app-blue bg-white resize-y p-4 ${
                 isTooShort
@@ -229,6 +263,21 @@ export const OriginalInputPage = () => {
           <ArrowRight className="w-5 h-5 ml-2" />
         </Button>
       </div>
+
+      <AlertDialog open={!!pendingMode} onOpenChange={(open) => !open && setPendingMode(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>입력 방식 변경</AlertDialogTitle>
+            <AlertDialogDescription>전환하면 입력한 내용이 사라져요. 계속할까요?</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex-row justify-between">
+            <AlertDialogCancel className="w-full">취소</AlertDialogCancel>
+            <AlertDialogAction className="w-full" onClick={handleConfirmSwitch}>
+              확인
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
