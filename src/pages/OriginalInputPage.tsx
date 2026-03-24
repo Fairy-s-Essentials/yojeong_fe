@@ -13,6 +13,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/AlertDialog';
+import { isValidUrl } from '@/utils/validation';
 import { useOriginalValidation, useExtractStatus } from '@/hooks';
 import { saveOriginalData, getOriginalData, clearOriginalData } from '@/services/storage';
 import { useExtractContentMutation } from '@/services/hooks/extract';
@@ -87,10 +88,6 @@ export const OriginalInputPage = () => {
     setIsContentLoaded(false);
     setExtractStatus(null);
     clearOriginalData();
-  };
-
-  const handleEditLink = () => {
-    resetInputText();
   };
 
   const hasInput = inputMode === 'link' ? !!(url || userContent) : !!userContent;
@@ -172,7 +169,7 @@ export const OriginalInputPage = () => {
               {isContentLoaded ? (
                 <Button
                   variant="outline"
-                  onClick={handleEditLink}
+                  onClick={resetInputText}
                   className="h-12 px-6 border-app-gray-300 text-app-gray-600 hover:bg-app-gray-50 cursor-pointer whitespace-nowrap"
                 >
                   <RefreshCw className="w-4 h-4 mr-2" />
@@ -181,7 +178,7 @@ export const OriginalInputPage = () => {
               ) : (
                 <Button
                   onClick={handleExtract}
-                  disabled={!url.trim() || isExtracting}
+                  disabled={!isValidUrl(url) || isExtracting}
                   className="h-12 px-6 bg-app-blue hover:bg-app-blue-dark text-white disabled:bg-app-gray-200 disabled:text-app-gray-400 disabled:cursor-not-allowed cursor-pointer whitespace-nowrap"
                 >
                   {isExtracting ? '불러오는 중...' : '원문 불러오기'}
