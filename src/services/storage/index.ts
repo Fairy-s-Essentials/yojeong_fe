@@ -1,7 +1,6 @@
 const ORIGINAL_DATA_KEY = 'yojeong_original_data';
 
 export interface OriginalData {
-  link: string;
   content: string;
 }
 

@@ -1,21 +1,25 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Link as LinkIcon, FileText, RefreshCw } from 'lucide-react';
 import { ORIGINAL_LENGTH_LIMITS } from '@/constants';
 import { Button, Input, TextArea } from '@/components';
 import { useOriginalValidation } from '@/hooks';
-import { saveOriginalData, getOriginalData } from '@/services/storage';
+import { saveOriginalData, getOriginalData, clearOriginalData } from '@/services/storage';
+import { useExtractContentMutation } from '@/services/hooks/extract';
 
 export const OriginalInputPage = () => {
   const navigate = useNavigate();
 
-  const [url, setUrl] = useState<string>('');
-  const [content, setContent] = useState<string>('');
+  const [inputMode, setInputMode] = useState<'link' | 'text'>('link');
+  const [url, setUrl] = useState('');
+  const [content, setContent] = useState('');
+  const [isContentLoaded, setIsContentLoaded] = useState(false);
+
+  const { mutate: extractContent, isPending: isExtracting } = useExtractContentMutation();
 
   useEffect(() => {
     const originalData = getOriginalData();
     if (originalData) {
-      setUrl(originalData.link);
       setContent(originalData.content);
     }
   }, []);
@@ -27,8 +31,29 @@ export const OriginalInputPage = () => {
   };
 
   const handleNextPage = () => {
-    saveOriginalData({ link: url, content });
+    saveOriginalData({ content });
     navigate('/summary');
+  };
+
+  const handleExtract = () => {
+    extractContent(
+      { url },
+      {
+        onSuccess: (res) => {
+          if (res.data?.content) {
+            setContent(res.data.content);
+            setIsContentLoaded(true);
+          }
+        },
+      },
+    );
+  };
+
+  const handleEditLink = () => {
+    setUrl('');
+    setContent('');
+    setIsContentLoaded(false);
+    clearOriginalData();
   };
 
   return (
@@ -41,73 +66,135 @@ export const OriginalInputPage = () => {
         </p>
       </div>
 
-      {/* 링크 + 원문 입력 영역 */}
-      <div className="w-full space-y-8">
-        {/* 링크 */}
-        <div>
-          <p className="text-app-gray-700 mb-2 block">
-            글 링크 <span className="text-app-gray-400">(선택사항)</span>
-          </p>
-          <Input
-            id="url"
-            type="url"
-            placeholder="https://example.com/article"
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
-            className="h-12 border-app-gray-200 rounded-lg focus:ring-2 focus:ring-app-blue focus:border-app-blue bg-white"
-          />
+      <div className="flex flex-col w-full space-y-8">
+        {/* 입력 방식 선택 영역 */}
+        <div className="flex gap-3">
+          <Button
+            variant="outline"
+            onClick={() => {
+              setInputMode('link');
+              setContent('');
+              setUrl('');
+              setIsContentLoaded(false);
+            }}
+            className={`flex-1 h-14 rounded-lg border-2 cursor-pointer ${
+              inputMode === 'link'
+                ? 'border-app-blue bg-app-blue/5 text-app-blue'
+                : 'border-app-gray-200 text-app-gray-500 hover:border-app-gray-300'
+            }`}
+          >
+            <LinkIcon className="w-5 h-5" />
+            <span className="font-medium">링크 입력</span>
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => {
+              setInputMode('text');
+              setContent('');
+              setUrl('');
+              setIsContentLoaded(false);
+            }}
+            className={`flex-1 h-14 rounded-lg border-2 cursor-pointer ${
+              inputMode === 'text'
+                ? 'border-app-blue bg-app-blue/5 text-app-blue'
+                : 'border-app-gray-200 text-app-gray-500 hover:border-app-gray-300'
+            }`}
+          >
+            <FileText className="w-5 h-5" />
+            <span className="font-medium">원문 작성</span>
+          </Button>
         </div>
 
-        {/* 원문 */}
-        <div>
-          <p className="text-app-gray-700 mb-2 block">
-            읽은 글 원문 <span className="text-app-red">*</span>
-          </p>
-          <TextArea
-            id="content"
-            placeholder={`읽은 글의 전체 내용을 입력해주세요... (최소 ${ORIGINAL_LENGTH_LIMITS.MIN.toLocaleString()}자)`}
-            value={content}
-            onChange={(e) => {
-              setContent(e.target.value);
-            }}
-            className={`min-h-[400px] border-app-gray-200 rounded-lg focus:ring-2 focus:border-app-blue bg-white resize-y p-4 ${
-              isTooShort
-                ? 'focus:ring-app-orange border-app-orange'
-                : isTooLong
-                  ? 'focus:ring-app-red border-app-red'
-                  : 'focus:ring-app-blue'
-            }`}
-          />
-          <div className="flex justify-between items-center mt-2">
-            <div>
-              {isTooShort && (
-                <p className="text-sm text-app-orange">
-                  최소 {ORIGINAL_LENGTH_LIMITS.MIN.toLocaleString()}자 이상 입력해주세요 (현재{' '}
-                  {ORIGINAL_LENGTH_LIMITS.MIN - contentLength}자 부족)
-                </p>
-              )}
-              {isTooLong && (
-                <p className="text-sm text-app-red">
-                  최대 {ORIGINAL_LENGTH_LIMITS.MAX.toLocaleString()}자까지 입력 가능합니다
-                </p>
-              )}
-              {isValid && <p className="text-sm text-app-green">입력 가능한 범위입니다</p>}
-            </div>
-            <p
-              className={`text-sm ${
-                isTooShort
-                  ? 'text-app-orange'
-                  : isTooLong
-                    ? 'text-app-red'
-                    : isValid
-                      ? 'text-app-green'
-                      : 'text-app-gray-400'
-              }`}
-            >
-              {contentLength.toLocaleString()} / {ORIGINAL_LENGTH_LIMITS.MAX.toLocaleString()} 글자
+        {/* 링크 / 원문 영역 */}
+        {inputMode === 'link' ? (
+          <div>
+            <p className="text-app-gray-700 mb-2 block">
+              글 링크 <span className="text-app-red">*</span>
             </p>
+            <div className="flex gap-2">
+              <Input
+                id="url"
+                type="url"
+                placeholder="https://example.com/article"
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+                readOnly={isContentLoaded}
+                className={`h-12 border-app-gray-200 rounded-lg focus:ring-2 focus:ring-app-blue focus:border-app-blue bg-white ${
+                  isContentLoaded ? 'bg-app-gray-50 cursor-not-allowed' : ''
+                }`}
+              />
+
+              {isContentLoaded ? (
+                <Button
+                  variant="outline"
+                  onClick={handleEditLink}
+                  className="h-12 px-6 border-app-gray-300 text-app-gray-600 hover:bg-app-gray-50 cursor-pointer whitespace-nowrap"
+                >
+                  <RefreshCw className="w-4 h-4 mr-2" />
+                  수정
+                </Button>
+              ) : (
+                <Button
+                  onClick={handleExtract}
+                  disabled={!url.trim() || isExtracting}
+                  className="h-12 px-6 bg-app-blue hover:bg-app-blue-dark text-white disabled:bg-app-gray-200 disabled:text-app-gray-400 disabled:cursor-not-allowed cursor-pointer whitespace-nowrap"
+                >
+                  {isExtracting ? '불러오는 중...' : '원문 불러오기'}
+                </Button>
+              )}
+            </div>
           </div>
-        </div>
+        ) : (
+          <div>
+            <p className="text-app-gray-700 mb-2 block">
+              읽은 글 원문 <span className="text-app-red">*</span>
+            </p>
+            <TextArea
+              id="content"
+              placeholder={`읽은 글의 전체 내용을 입력해주세요... (최소 ${ORIGINAL_LENGTH_LIMITS.MIN.toLocaleString()}자)`}
+              value={content}
+              onChange={(e) => {
+                setContent(e.target.value);
+              }}
+              className={`min-h-[400px] border-app-gray-200 rounded-lg focus:ring-2 focus:border-app-blue bg-white resize-y p-4 ${
+                isTooShort
+                  ? 'focus:ring-app-orange border-app-orange'
+                  : isTooLong
+                    ? 'focus:ring-app-red border-app-red'
+                    : 'focus:ring-app-blue'
+              }`}
+            />
+            <div className="flex justify-between items-center mt-2">
+              <div>
+                {isTooShort && (
+                  <p className="text-sm text-app-orange">
+                    최소 {ORIGINAL_LENGTH_LIMITS.MIN.toLocaleString()}자 이상 입력해주세요 (현재{' '}
+                    {ORIGINAL_LENGTH_LIMITS.MIN - contentLength}자 부족)
+                  </p>
+                )}
+                {isTooLong && (
+                  <p className="text-sm text-app-red">
+                    최대 {ORIGINAL_LENGTH_LIMITS.MAX.toLocaleString()}자까지 입력 가능합니다
+                  </p>
+                )}
+                {isValid && <p className="text-sm text-app-green">입력 가능한 범위입니다</p>}
+              </div>
+              <p
+                className={`text-sm ${
+                  isTooShort
+                    ? 'text-app-orange'
+                    : isTooLong
+                      ? 'text-app-red'
+                      : isValid
+                        ? 'text-app-green'
+                        : 'text-app-gray-400'
+                }`}
+              >
+                {contentLength.toLocaleString()} / {ORIGINAL_LENGTH_LIMITS.MAX.toLocaleString()} 글자
+              </p>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* 버튼 영역 */}
@@ -120,7 +207,7 @@ export const OriginalInputPage = () => {
           취소
         </Button>
         <Button
-          disabled={!isValid}
+          disabled={!isValid || (inputMode === 'link' && !isContentLoaded)}
           onClick={handleNextPage}
           className="flex-1 h-12 bg-app-blue hover:bg-app-blue-dark text-white disabled:bg-app-gray-200 disabled:text-app-gray-400 disabled:cursor-not-allowed cursor-pointer"
         >
