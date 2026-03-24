@@ -7,7 +7,7 @@ import { SkeletonMainPage } from '@/components/skeletons';
 import { useMainAnalysisQuery, useMainRecentSummaryQuery } from '@/services/hooks/main';
 import { useAuth } from '@/hooks/auth/useAuth';
 import { useUsageLimit } from '@/services/hooks/usage';
-import { ALERT_MESSAGE } from '@/constants/alertMessage';
+import { MESSAGE } from '@/constants/message';
 import { useSummarySSE } from '@/contexts';
 
 export const MainPage = () => {
@@ -55,8 +55,8 @@ const MainContent = ({ isLimited, isProcessing }: { isLimited: boolean; isProces
         >
           <BookOpen className="w-5 h-5 mr-2" />새 글 읽기
         </Button>
-        {isLimited && <p className="text-red-500 text-sm mt-3 font-medium">{ALERT_MESSAGE.USAGE_LIMIT}</p>}
-        {isProcessing && <p className="text-app-gray-500 text-sm mt-3 font-medium">{ALERT_MESSAGE.PROCESSING}</p>}
+        {isLimited && <p className="text-red-500 text-sm mt-3 font-medium">{MESSAGE.ANALYSIS.USAGE_LIMIT}</p>}
+        {isProcessing && <p className="text-app-gray-500 text-sm mt-3 font-medium">{MESSAGE.ANALYSIS.PROCESSING}</p>}
       </div>
 
       {/* 학습 통계 영역 - useSuspenseQuery로 data 항상 정의됨 */}
@@ -101,7 +101,7 @@ const MainContent = ({ isLimited, isProcessing }: { isLimited: boolean; isProces
             >
               첫 글 시작하기
             </Button>
-            {isLimited && <p className="text-red-500 text-sm mt-3 font-medium">{ALERT_MESSAGE.USAGE_LIMIT}</p>}
+            {isLimited && <p className="text-red-500 text-sm mt-3 font-medium">{MESSAGE.ANALYSIS.USAGE_LIMIT}</p>}
           </div>
         )}
       </div>

@@ -35,7 +35,7 @@ export const SummaryInputPage = () => {
     const originalData = getOriginalData();
 
     if (originalData) {
-      setOriginalLink(originalData.link);
+      setOriginalLink(originalData.url ?? '');
       setOriginalContent(originalData.content);
       setOriginalLength(originalData.content.trim().length);
     } else {
