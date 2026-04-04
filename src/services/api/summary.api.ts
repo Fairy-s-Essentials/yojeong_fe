@@ -1,4 +1,4 @@
-import type { DetailSummary, SaveSummaryProps, SaveSummaryResponse } from '@/types/summary.type';
+import type { ActiveJob, DetailSummary, SaveSummaryProps, SaveSummaryResponse } from '@/types/summary.type';
 import api from '.';
 
 /**
@@ -18,4 +18,13 @@ export const getDetailSummary = async (resultId: number): Promise<DetailSummary>
 export const saveLearningNote = async (id: number, learningNote: string) => {
   const { data } = await api.post(`/summary/learning-note`, { id, learningNote });
   return data.data;
+};
+
+export const getActiveJob = async (): Promise<ActiveJob | null> => {
+  const { data } = await api.get('/summary/job/active');
+  return data.data;
+};
+
+export const acknowledgeJob = async (jobId: string): Promise<void> => {
+  await api.patch(`/summary/job/${jobId}/acknowledge`);
 };
