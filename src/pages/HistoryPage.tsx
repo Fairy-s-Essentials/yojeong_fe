@@ -17,9 +17,12 @@ import { BookOpen } from 'lucide-react';
 import { useNavigate } from 'react-router';
 import { useDebounce } from '@/hooks';
 import { useHistoryStatsData, useCalendarData, useSummaryListData } from '@/hooks/history';
+import { useSummarySSE } from '@/contexts';
 import type { HistoryPeriod } from '@/types/history.type';
 
 export const HistoryPage = () => {
+  const { state, acknowledgeJob } = useSummarySSE();
+
   const [period, setPeriod] = useState<HistoryPeriod>(7);
   const [inputValue, setInputValue] = useState<string>('');
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -27,6 +30,12 @@ export const HistoryPage = () => {
   const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
 
   const debouncedSearch = useDebounce(inputValue, 300);
+
+  useEffect(() => {
+    if (state.pendingAcknowledgeJobId) {
+      acknowledgeJob();
+    }
+  }, [state.pendingAcknowledgeJobId, acknowledgeJob]);
 
   useEffect(() => {
     setCurrentPage(1);
