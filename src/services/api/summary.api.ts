@@ -1,5 +1,5 @@
-import type { DetailSummary, SaveSummaryProps, SaveSummaryResponse } from '@/types/summary.type';
 import api from '.';
+import type { ActiveJob, DetailSummary, SaveSummaryProps, SaveSummaryResponse } from '@/types/summary.type';
 
 /**
  * 요약 저장 요청 - SSE 방식으로 변경
@@ -18,4 +18,13 @@ export const getDetailSummary = async (resultId: number): Promise<DetailSummary>
 export const saveLearningNote = async (id: number, learningNote: string) => {
   const { data } = await api.post(`/summary/learning-note`, { id, learningNote });
   return data.data;
+};
+
+export const getActiveJob = async (signal?: AbortSignal): Promise<ActiveJob | null> => {
+  const { data } = await api.get('/summary/job/active', { signal });
+  return data.data;
+};
+
+export const acknowledgeJob = async (jobId: string): Promise<void> => {
+  await api.patch(`/summary/job/${jobId}/acknowledge`);
 };

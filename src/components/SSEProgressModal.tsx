@@ -12,7 +12,7 @@ import Button from './Button';
  */
 export const SSEProgressModal = () => {
   const navigate = useNavigate();
-  const { state, clearState, toggleMinimize, hasActiveState } = useSummarySSE();
+  const { state, clearState, toggleMinimize, acknowledgeJob, hasActiveState } = useSummarySSE();
 
   if (!hasActiveState) return null;
 
@@ -92,7 +92,7 @@ export const SSEProgressModal = () => {
           </div>
           <div className="flex gap-2">
             <Button
-              onClick={clearState}
+              onClick={acknowledgeJob}
               variant="outline"
               className="flex-1 border-app-gray-200 text-app-gray-600 hover:bg-app-gray-50 cursor-pointer"
             >
@@ -101,7 +101,7 @@ export const SSEProgressModal = () => {
             <Button
               onClick={() => {
                 navigate(`/analysis/${state.resultId}`);
-                clearState();
+                acknowledgeJob();
               }}
               className="flex-1 bg-green-500 hover:bg-green-600 text-white cursor-pointer"
             >

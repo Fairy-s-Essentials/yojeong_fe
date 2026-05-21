@@ -44,6 +44,16 @@ export interface SaveSummaryResponse {
   jobId: string;
 }
 
+export interface ActiveJob {
+  jobId: string;
+  status: SSEStatus;
+  step: SSEStep;
+  progress: number;
+  message: string;
+  result: { resultId: number } | null;
+  error: { code: string; message: string } | null;
+}
+
 export interface DetailSummary {
   id: number;
   originalText: string | null;
