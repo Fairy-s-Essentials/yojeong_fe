@@ -1,11 +1,15 @@
 import { useCallback, useEffect, useState } from 'react';
+import { ThumbsDown, ThumbsUp } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router';
 import { LEARNING_LENGTH_LIMITS } from '@/constants';
+import type { SummaryFeedbackReaction } from '@/types/summary.type';
+import { cn } from '@/utils/cn';
+import { showToast } from '@/utils/toast';
 import { AccuracyResult, Button, SummaryBox, FeedBackBox, TextArea, OriginalTextModal } from '@/components';
 import { AsyncBoundary } from '@/components/boundaries';
 import { ErrorFallback } from '@/components/errors';
 import { SkeletonAnalysisPage } from '@/components/skeletons';
-import { useGetDetailSummary, useSaveLearningNote } from '@/services/hooks/summary';
+import { useGetDetailSummary, useSaveLearningNote, useSaveSummaryFeedback } from '@/services/hooks/summary';
 import { useLoading } from '@/contexts';
 
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
@@ -31,6 +35,7 @@ const AnalysisContent = ({ summaryId }: AnalysisContentProps) => {
   // useSuspenseQuery - data는 항상 정의됨
   const { data: detailSummary } = useGetDetailSummary(summaryId);
   const { mutate: saveLearningNote } = useSaveLearningNote();
+  const { mutate: saveSummaryFeedback, isPending: isFeedbackSaving } = useSaveSummaryFeedback();
 
   const [learningNote, setLearningNote] = useState<string>('');
   const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle');
@@ -97,6 +102,18 @@ const AnalysisContent = ({ summaryId }: AnalysisContentProps) => {
     navigate('/');
   };
 
+  const handleFeedbackClick = (reaction: SummaryFeedbackReaction) => {
+    const nextReaction = detailSummary.feedbackReaction === reaction ? null : reaction;
+    saveSummaryFeedback(
+      { id: summaryId, reaction: nextReaction },
+      {
+        onError: () => {
+          showToast('SUMMARY_FEEDBACK_ERROR');
+        },
+      },
+    );
+  };
+
   return (
     <div className="flex flex-col items-center max-w-4xl mx-auto px-6 py-12">
       {/* 정확도 점수 영역 */}
@@ -149,6 +166,50 @@ const AnalysisContent = ({ summaryId }: AnalysisContentProps) => {
         <FeedBackBox type="wellUnderstood" value={detailSummary.aiWellUnderstood} />
         <FeedBackBox type="missedPoint" value={detailSummary.aiMissedPoints} />
         <FeedBackBox type="improvement" value={detailSummary.aiImprovements} />
+      </div>
+
+      {/* 사용자 피드백 영역 */}
+      <div className="w-full mb-12 border border-app-gray-200 rounded-lg px-6 py-5 bg-white">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h3 className="text-app-gray-800 mb-1">이 분석이 도움이 되었나요?</h3>
+            <p className="text-sm text-app-gray-500">피드백은 더 나은 분석 결과를 만드는 데 사용됩니다.</p>
+          </div>
+          <div className="flex w-full justify-center gap-5 sm:w-auto sm:justify-end">
+            <Button
+              type="button"
+              variant="outline"
+              aria-pressed={detailSummary.feedbackReaction === 'LIKE'}
+              disabled={isFeedbackSaving}
+              onClick={() => handleFeedbackClick('LIKE')}
+              className={cn(
+                'h-11 flex-1 px-5 rounded-lg border transition-colors cursor-pointer sm:flex-none sm:min-w-28',
+                detailSummary.feedbackReaction === 'LIKE'
+                  ? 'border-app-blue bg-app-blue text-white hover:bg-app-blue-dark'
+                  : 'border-app-gray-200 bg-white text-app-gray-600 hover:bg-app-gray-50',
+              )}
+            >
+              <ThumbsUp size={18} />
+              좋아요
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              aria-pressed={detailSummary.feedbackReaction === 'DISLIKE'}
+              disabled={isFeedbackSaving}
+              onClick={() => handleFeedbackClick('DISLIKE')}
+              className={cn(
+                'h-11 flex-1 px-5 rounded-lg border transition-colors cursor-pointer sm:flex-none sm:min-w-28',
+                detailSummary.feedbackReaction === 'DISLIKE'
+                  ? 'border-app-red bg-app-red text-white hover:bg-red-700'
+                  : 'border-app-gray-200 bg-white text-app-gray-600 hover:bg-app-gray-50',
+              )}
+            >
+              <ThumbsDown size={18} />
+              싫어요
+            </Button>
+          </div>
+        </div>
       </div>
 
       {/* 배운 점 영역 */}

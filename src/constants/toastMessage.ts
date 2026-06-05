@@ -49,6 +49,11 @@ export const TOAST_MESSAGE = {
     title: '요약 요청 실패',
     description: '잠시 후 다시 시도해주세요.',
   },
+  SUMMARY_FEEDBACK_ERROR: {
+    type: 'error' as const,
+    title: '피드백 저장 실패',
+    description: '잠시 후 다시 시도해주세요.',
+  },
 } as const;
 
 export type ToastMessageKey = keyof typeof TOAST_MESSAGE;
