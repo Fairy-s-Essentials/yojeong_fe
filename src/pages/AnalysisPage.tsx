@@ -35,7 +35,7 @@ const AnalysisContent = ({ summaryId }: AnalysisContentProps) => {
   // useSuspenseQuery - data는 항상 정의됨
   const { data: detailSummary } = useGetDetailSummary(summaryId);
   const { mutate: saveLearningNote } = useSaveLearningNote();
-  const { mutate: saveSummaryFeedback, isPending: isFeedbackSaving } = useSaveSummaryFeedback();
+  const { mutate: saveSummaryFeedback } = useSaveSummaryFeedback();
 
   const [learningNote, setLearningNote] = useState<string>('');
   const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle');
@@ -180,7 +180,6 @@ const AnalysisContent = ({ summaryId }: AnalysisContentProps) => {
               type="button"
               variant="outline"
               aria-pressed={detailSummary.feedbackReaction === 'LIKE'}
-              disabled={isFeedbackSaving}
               onClick={() => handleFeedbackClick('LIKE')}
               className={cn(
                 'h-11 flex-1 px-5 rounded-lg border transition-colors cursor-pointer sm:flex-none sm:min-w-28',
@@ -196,7 +195,6 @@ const AnalysisContent = ({ summaryId }: AnalysisContentProps) => {
               type="button"
               variant="outline"
               aria-pressed={detailSummary.feedbackReaction === 'DISLIKE'}
-              disabled={isFeedbackSaving}
               onClick={() => handleFeedbackClick('DISLIKE')}
               className={cn(
                 'h-11 flex-1 px-5 rounded-lg border transition-colors cursor-pointer sm:flex-none sm:min-w-28',
