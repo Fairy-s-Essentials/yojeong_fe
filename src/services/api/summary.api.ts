@@ -1,5 +1,12 @@
 import api from '.';
-import type { ActiveJob, DetailSummary, SaveSummaryProps, SaveSummaryResponse } from '@/types/summary.type';
+import type {
+  ActiveJob,
+  DetailSummary,
+  SaveSummaryFeedbackProps,
+  SaveSummaryFeedbackResponse,
+  SaveSummaryProps,
+  SaveSummaryResponse,
+} from '@/types/summary.type';
 
 /**
  * 요약 저장 요청 - SSE 방식으로 변경
@@ -17,6 +24,14 @@ export const getDetailSummary = async (resultId: number): Promise<DetailSummary>
 
 export const saveLearningNote = async (id: number, learningNote: string) => {
   const { data } = await api.post(`/summary/learning-note`, { id, learningNote });
+  return data.data;
+};
+
+export const saveSummaryFeedback = async ({
+  id,
+  reaction,
+}: SaveSummaryFeedbackProps): Promise<SaveSummaryFeedbackResponse> => {
+  const { data } = await api.post(`/summary/${id}/feedback`, { reaction });
   return data.data;
 };
 

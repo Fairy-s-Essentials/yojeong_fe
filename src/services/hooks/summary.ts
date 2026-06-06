@@ -1,6 +1,6 @@
 import { useMutation, useSuspenseQuery, useQueryClient } from '@tanstack/react-query';
-import { getDetailSummary, saveLearningNote, saveSummary } from '../api/summary.api';
-import type { SaveSummaryProps } from '@/types/summary.type';
+import type { DetailSummary, SaveSummaryFeedbackProps, SaveSummaryProps } from '@/types/summary.type';
+import { getDetailSummary, saveLearningNote, saveSummary, saveSummaryFeedback } from '../api/summary.api';
 
 /**
  * 요약 저장 (Mutation) - SSE 방식
@@ -31,6 +31,42 @@ export const useSaveLearningNote = () => {
   return useMutation({
     mutationFn: ({ id, learningNote }: { id: number; learningNote: string }) => saveLearningNote(id, learningNote),
     onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['detailSummary', variables.id] });
+    },
+  });
+};
+
+/**
+ * 분석 결과 피드백 저장 (좋아요/싫어요/취소)
+ */
+export const useSaveSummaryFeedback = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: SaveSummaryFeedbackProps) => saveSummaryFeedback(data),
+    onMutate: async ({ id, reaction }) => {
+      const queryKey = ['detailSummary', id];
+
+      await queryClient.cancelQueries({ queryKey });
+      const previousSummary = queryClient.getQueryData<DetailSummary>(queryKey);
+
+      queryClient.setQueryData<DetailSummary>(queryKey, (old) =>
+        old
+          ? {
+              ...old,
+              feedbackReaction: reaction,
+            }
+          : old,
+      );
+
+      return { previousSummary };
+    },
+    onError: (_, variables, context) => {
+      if (context?.previousSummary) {
+        queryClient.setQueryData(['detailSummary', variables.id], context.previousSummary);
+      }
+    },
+    onSettled: (_, __, variables) => {
       queryClient.invalidateQueries({ queryKey: ['detailSummary', variables.id] });
     },
   });

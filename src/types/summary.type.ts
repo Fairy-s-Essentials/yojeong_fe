@@ -44,6 +44,18 @@ export interface SaveSummaryResponse {
   jobId: string;
 }
 
+export type SummaryFeedbackReaction = 'LIKE' | 'DISLIKE';
+
+export interface SaveSummaryFeedbackProps {
+  id: number;
+  reaction: SummaryFeedbackReaction | null;
+}
+
+export interface SaveSummaryFeedbackResponse {
+  summaryId: number;
+  feedbackReaction: SummaryFeedbackReaction | null;
+}
+
 export interface ActiveJob {
   jobId: string;
   status: SSEStatus;
@@ -68,5 +80,6 @@ export interface DetailSummary {
   aiMissedPoints: string[];
   aiImprovements: string[];
   learningNote: string | null;
+  feedbackReaction: SummaryFeedbackReaction | null;
   createdAt: string;
 }
